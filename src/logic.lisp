@@ -1,40 +1,10 @@
 (defpackage :logic/logic
   (:use :cl
-        :logic/formula))
+        :logic/formula
+        :logic/sequent))
 (in-package :logic/logic)
 
 ; Proof: https://gist.github.com/myaosato/fd198c9c211f541d6349f8df7ad899a7
-
-
-;; ****************************************************************
-;; sequent
-;; ****************************************************************
-(defun make-sequent (antecedent succedent)
-  (cons antecedent succedent))
-
-(defun l (seq)
-  (car seq))
-
-(defun r (seq)
-  (cdr seq))
-
-(defun length-l (seq)
-  (length (l seq)))
-
-(defun length-r (seq)
-  (length (r seq)))
-
-(defun nth-l (n seq)
-  (nth n (l seq)))
-
-(defun nth-r (n seq)
-  (nth n (r seq)))
-
-(defun empty-l (seq)
-  (null (l seq)))
-
-(defun empty-r (seq)
-  (null (r seq)))
 
 
 ;; ****************************************************************

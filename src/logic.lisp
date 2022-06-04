@@ -1,27 +1,11 @@
 (defpackage :logic/logic
   (:use :cl
         :logic/formula
-        :logic/sequent))
+        :logic/sequent
+        :logic/goal))
 (in-package :logic/logic)
 
 ; Proof: https://gist.github.com/myaosato/fd198c9c211f541d6349f8df7ad899a7
-
-
-;; ****************************************************************
-;; goal
-;; ****************************************************************
-(defun make-goal (sequent &rest sequents)
-  (list* sequent sequents))
-
-(defun do-step (current-goal n rule args)
-  (let ((result (apply rule (nth n current-goal) args)))
-    `(,@(subseq  current-goal 0 n)
-      ,@(cond ((equal result (list t))
-               nil)
-              ((null result)
-               (error ""))
-              (t result))
-      ,@(subseq  current-goal (1+ n)))))
 
 
 ;; ****************************************************************
@@ -211,30 +195,6 @@
         (rotatef (nth n r) (nth m r))
         (make-goal (make-sequent (l seq) r)))
       (error "")))
-
-
-;; ****************************************************************
-;; formater
-;;
-;; TODO q
-;;   - what is formula ?
-;;   - how to define formula ?
-;; ****************************************************************
-(defun format-seq (seq n)
-  (format nil "H~A: ~{~A~^, ~}~%C~A: ~{~A~^, ~}~%"
-          n (mapcar #'format-formula (l seq))
-          n (mapcar #'format-formula (r seq))))
-
-(defun print-seq (seq n)
-  (format t "~A" (format-seq seq n))
-  seq)
-
-(defun print-goal (goal)
-  (if (null goal)
-      (format t "Complete !!~%")
-      (loop :for seq :in goal
-            :for n :from 0
-            :do (print-seq seq n))))
 
 
 ;; ****************************************************************

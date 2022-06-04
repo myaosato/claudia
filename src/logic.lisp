@@ -2,36 +2,11 @@
   (:use :cl
         :logic/formula
         :logic/sequent
-        :logic/goal))
+        :logic/goal
+        :logic/axiom))
 (in-package :logic/logic)
 
 ; Proof: https://gist.github.com/myaosato/fd198c9c211f541d6349f8df7ad899a7
-
-
-;; ****************************************************************
-;; macros
-;; ****************************************************************
-;;;; Axiom
-;;;; -----
-;;;; Γ ⊢ Δ
-(defmacro def-axiom (name lambda-list &body condition)
-  `(defun ,name ,lambda-list
-     (if (progn ,@condition)
-         (list t)
-         (error ""))))
-
-;;;; ll0, ll1,... lln, lr0, lr1,... |- rl0, rl1,... rlm, rr0, rr1,...
-(defmacro with-splited-seqent (sequent (n m ll lr rl rr) &body body)
-  (let ((seq (gensym "SEQUENT-")))
-    `(cond ((< (length-l seq) ,n) (error ""))
-           ((< (length-r seq) ,m) (error ""))
-           (t
-            (let* ((,seq ,sequent)
-                   (,ll (subseq (l ,seq) 0 ,n))
-                   (,lr (subseq (l ,seq) ,n))
-                   (,rl (subseq (r ,seq) 0 ,m))
-                   (,rr (subseq (r ,seq) ,m)))
-              ,@body)))))
 
 
 ;; ****************************************************************
@@ -57,7 +32,7 @@
 ;;;; -----------------
 ;;;; Γ,Σ ⊢ Δ,Π
 (defun cut (seq a n m)
-  (with-splited-seqent seq (n m g s d p)
+  (with-splited-sequent seq (n m g s d p)
     (make-goal (make-sequent g (cons a d))
                (make-sequent (cons a s) p))))
 
@@ -79,7 +54,7 @@
   (and-l seq #'∧-2))
 
 (defun and-r (seq n m)
-  (with-splited-seqent seq (n m g s f-d p)
+  (with-splited-sequent seq (n m g s f-d p)
     (destructuring-bind (f d) f-d
       (if (is-∧ f)
           (make-goal (make-sequent g (cons (∧-1 f) d))
@@ -104,7 +79,7 @@
   (or-r seq #'∨-2))
 
 (defun or-l (seq n m)
-  (with-splited-seqent seq (n m f-g s d p)
+  (with-splited-sequent seq (n m f-g s d p)
     (destructuring-bind (f g) f-g
       (if (is-∨ f)
           (make-goal (make-sequent (cons (∨-1 f) g) d)
@@ -142,7 +117,7 @@
       (error ""))))
 
 (defun to-l (seq n m)
-  (with-splited-seqent seq (n m f-g s d p)
+  (with-splited-sequent seq (n m f-g s d p)
     (destructuring-bind (f g) f-g
       (if (is-→ f)
           (make-goal (make-sequent g (cons (→-1 f) d))

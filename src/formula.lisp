@@ -3,7 +3,7 @@
   (:export :∧ :is-∧ :∧-1 :∧-2
            :∨ :is-∨ :∨-1 :∨-2
            :¬ :is-¬ :¬-1
-           :⇒ :is-⇒ :⇒-1 :⇒-2
+           :→ :is-→ :→-1 :→-2
            :prop :is-prop :prop-name
            :format-formula))
 (in-package :logic/formula)

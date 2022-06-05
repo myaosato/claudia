@@ -73,7 +73,7 @@
         ((is-∨ formula)
          (format nil "(~A ∨ ~A)" (format-formula (∨-1 formula)) (format-formula (∨-2 formula))))
         ((is-→ formula)
-         (format nil "(~A ∧ ~A)" (format-formula (→-1 formula)) (format-formula (→-2 formula))))
+         (format nil "(~A → ~A)" (format-formula (→-1 formula)) (format-formula (→-2 formula))))
         ((eq (car formula) :nat)
          (format nil "~A is Nat" (format-formula (nth 1 formula))))
         ((eq (car formula) :succ)

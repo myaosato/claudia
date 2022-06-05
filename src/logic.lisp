@@ -22,12 +22,14 @@
         (step (gensym "STEP-"))
         (n (gensym "N-"))
         (rule (gensym "RULE-"))
-        (args (gensym "ARGS-")))
+        (args (gensym "ARGS-"))
+        (steps (mapcar (lambda (x) `(list ,(nth 0 x) ',(nth 1 x) ,@(nthcdr 2 x)))
+                       proof)))
     `(defun ,name ()
        (let ((,current-goal (make-goal (make-sequent ,antecedent ,succedent))))
          (format t "↓↓↓ GOAL ↓↓↓ ~%")
          (print-goal ,current-goal)
-         (loop :for ,step :in ',proof
+         (loop :for ,step :in (list ,@steps)
                :for ,n := (car ,step)
                :for ,rule := (cadr ,step)
                :for ,args := (cddr ,step)
@@ -38,7 +40,7 @@
 
 
 ;; ****************************************************************
-;; ex. law-of-exclded-middle
+;; ex. law of exclded middle
 ;; ⊢ A∨¬A
 ;; ****************************************************************
 (let ((a (prop "A")))
@@ -48,4 +50,55 @@
     (0 pr 0 1)
     (0 or-r2)
     (0 not-r)
+    (0 id)))
+
+
+;; ****************************************************************
+;; ex. material implication 1
+;; A → B ⊢ ¬A ∨ B
+;; ****************************************************************
+(let ((a (prop "A"))
+      (b (prop "B")))
+  (def-theorem material-implication-1 (list (→ A B)) (list (∨ (¬ a) b))
+    (0 cr)
+    (0 or-r1)
+    (0 pr 0 1)
+    (0 or-r2)
+    (0 pr 0 1)
+    (0 to-l 1 1)
+    (1 id)
+    (0 pr 0 1)
+    (0 not-r)
+    (0 id)))
+
+
+;; ****************************************************************
+;; ex. material implication 2
+;; ⊢ (¬A ∨ B) → (A → B)
+;; ****************************************************************
+(let ((a (prop "A"))
+      (b (prop "B")))
+  (def-theorem material-implication-2 nil (list (→ (∨ (¬ a) b) (→ A B)))
+    (0 to-r)
+    (0 to-r)
+    (0 pl 0 1)
+    (0 or-l 2 0)
+    (1 id)
+    (0 not-l)
+    (0 id)))
+
+
+;; ****************************************************************
+;; ex. Peirce's law
+;; ⊢ ((A → B) → A) → A
+;; ****************************************************************
+(let ((a (prop "A"))
+      (b (prop "B")))
+  (def-theorem |Perice's law| nil (list (→ (→ (→ a b) a) a))
+    (0 to-r)
+    (0 cr)
+    (0 to-l 1 1)
+    (1 id)
+    (0 to-r)
+    (0 wr)
     (0 id)))

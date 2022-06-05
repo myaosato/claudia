@@ -58,13 +58,15 @@
 
 ;; ll0, ll1,... lln, lr0, lr1,... |- rl0, rl1,... rlm, rr0, rr1,...
 (defmacro with-splited-sequent (sequent (n m ll lr rl rr) &body body)
-  (let ((seq (gensym "SEQUENT-")))
-    `(let ((,seq ,sequent))
-       (cond ((< (length-l ,seq) ,n) (error ""))
+  (let ((seq (gensym "SEQUENT-"))
+        (n% (gensym "N-")))
+    `(let ((,seq ,sequent)
+           (,n% ,n))
+       (cond ((< (length-l ,seq) ,n%) (error ""))
              ((< (length-r ,seq) ,m) (error ""))
              (t                   
-              (let ((,ll (subseq (l ,seq) 0 ,n))
-                    (,lr (subseq (l ,seq) ,n))
+              (let ((,ll (subseq (l ,seq) 0 ,n%))
+                    (,lr (subseq (l ,seq) ,n%))
                     (,rl (subseq (r ,seq) 0 ,m))
                     (,rr (subseq (r ,seq) ,m)))
                 ,@body))))))

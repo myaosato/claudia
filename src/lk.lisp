@@ -60,8 +60,9 @@
   (and-l seq #'∧-2))
 
 (defun and-r (seq n m)
-  (with-splited-sequent seq (n m g s f-d p)
-    (destructuring-bind (f d) f-d
+  (let ((f (nth-r 0 seq)))
+    ;; TODO (rest (r seq)) => (rest-r seq)
+    (with-splited-sequent (cons (l seq) (rest (r seq))) (n (1- m) g s d p)
       (if (is-∧ f)
           (make-goal (make-sequent g (cons (∧-1 f) d))
                      (make-sequent s (cons (∧-2 f) p)))
@@ -85,8 +86,9 @@
   (or-r seq #'∨-2))
 
 (defun or-l (seq n m)
-  (with-splited-sequent seq (n m f-g s d p)
-    (destructuring-bind (f g) f-g
+  (let ((f (nth-l 0 seq)))
+    ;; TODO (rest (l seq)) => (rest-l seq)
+    (with-splited-sequent (cons (rest (l seq)) (r seq)) ((1- n) m g s d p)
       (if (is-∨ f)
           (make-goal (make-sequent (cons (∨-1 f) g) d)
                      (make-sequent (cons (∨-2 f) s) p))
@@ -110,7 +112,6 @@
                                  (cdr (r seq))))
         (error ""))))
 
-
 ;; To
 ;; A,Γ ⊢ B,Δ      Γ ⊢ A,Δ  B,Σ ⊢ Π
 ;; ---------(¬R)  ----------------(¬L)  
@@ -123,8 +124,9 @@
       (error ""))))
 
 (defun to-l (seq n m)
-  (with-splited-sequent seq (n m f-g s d p)
-    (destructuring-bind (f g) f-g
+  (let ((f (nth-l 0 seq)))
+    ;; TODO (rest (l seq)) => (rest-l seq)
+    (with-splited-sequent (cons (rest (l seq)) (r seq)) ((1- n) m g s d p)
       (if (is-→ f)
           (make-goal (make-sequent g (cons (→-1 f) d))
                      (make-sequent (cons (→-2 f) s) p))

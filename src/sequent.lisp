@@ -1,5 +1,6 @@
 (defpackage :logic/sequent
-  (:use :cl)
+  (:use :cl
+        :logic/pprint)
   (:import-from :logic/formula)
   (:export :make-sequent
            :l
@@ -47,9 +48,10 @@
   (null (r seq)))
 
 (defun format-seq (seq n)
-  (format nil "H~A: ~{~A~^, ~}~%C~A: ~{~A~^, ~}~%"
-          n (l seq)
-          n (r seq)))
+  (let ((*print-pprint-dispatch* print-logic-print-dispatch))
+    (format nil "H~A: ~{~:W~^, ~}~%C~A: ~{~:W~^, ~}~%"
+            n (l seq)
+            n (r seq))))
 
 (defun print-seq (seq n)
   (format t "~A" (format-seq seq n))

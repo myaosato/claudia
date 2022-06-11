@@ -1,6 +1,7 @@
 (defpackage :logic/formula
   (:use :cl
-        :logic/term)
+        :logic/term
+        :logic/pprint)
   (:export :∧ :is-∧ :∧-1 :∧-2
            :∨ :is-∨ :∨-1 :∨-2
            :¬ :is-¬ :¬-1
@@ -29,7 +30,11 @@
   (let ((stream (gensym "STREAM")))
     `(defmethod print-object ((,formula ,class) ,stream)
        (format ,stream ,control-string ,@format-arguments))))
-
+(defmethod pprint-formula ((formula formula) stream)
+  (declare (ignore stream))
+  (error "pprint-formula method for type ~A is not defined" (type-of formula)))
+(def-logic-print ('formula stream formula)
+  (pprint-formula formula stream))
 
 (defclass ∧ (formula)
   ((∧-1 :initarg :∧-1 :reader ∧-1 :type formula)
@@ -39,6 +44,8 @@
 (defun is-∧ (formula)
   (eq (type-of formula) '∧))
 (def-print-formula (formula ∧) "(~A ~A ~A)" '∧ (∧-1 formula) (∧-2 formula))
+(defmethod pprint-formula ((formula ∧) stream)
+  (format stream "(~A ∧ ~A)" (pprint-formula (∧-1 formula) nil) (pprint-formula (∧-2 formula) nil)))
 
 (defclass ∨ (formula)
   ((∨-1 :initarg :∨-1 :reader ∨-1 :type formula)
@@ -48,6 +55,8 @@
 (defun is-∨ (formula)
   (eq (type-of formula) '∨))
 (def-print-formula (formula ∨) "(~A ~A ~A)" '∨ (∨-1 formula) (∨-2 formula))
+(defmethod pprint-formula ((formula ∨) stream)
+  (format stream "(~A ∨ ~A)" (pprint-formula (∨-1 formula) nil) (pprint-formula (∨-2 formula) nil)))
 
 (defclass ¬ (formula)
   ((¬-1 :initarg :¬-1 :reader ¬-1 :type formula)))
@@ -56,6 +65,8 @@
 (defun is-¬ (formula)
   (eq (type-of formula) '¬))
 (def-print-formula (formula ¬) "(~A ~A)" '¬ (¬-1 formula))
+(defmethod pprint-formula ((formula ¬) stream)
+  (format stream "¬~A" (pprint-formula (¬-1 formula) nil)))
 
 (defclass → (formula)
   ((→-1 :initarg :→-1 :reader →-1 :type formula)
@@ -65,6 +76,8 @@
 (defun is-→ (formula)
   (eq (type-of formula) '→))
 (def-print-formula (formula →) "(~A ~A ~A)" '→ (→-1 formula) (→-2 formula))
+(defmethod pprint-formula ((formula →) stream)
+  (format stream "(~A → ~A)" (pprint-formula (→-1 formula) nil) (pprint-formula (→-2 formula) nil)))
 
 (defclass atomic (formula) nil)
 
@@ -75,6 +88,8 @@
 (defun is-prop (formula)
   (eq (type-of formula) 'prop))
 (def-print-formula (formula prop) "#<Prop: ~A>" (name formula))
+(defmethod pprint-formula ((formula prop) stream)
+  (format stream "~A" (name formula)))
 
 (defclass predicate (atomic)
   ((name :initarg :name :reader name)
@@ -86,3 +101,5 @@
   `(defun ,name (&rest terms)
      (apply #'predicate ',name ,arity terms)))
 (def-print-formula (formula predicate) "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list))
+(defmethod pprint-formula ((formula predicate) stream)
+  (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list)))

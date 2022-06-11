@@ -1,7 +1,6 @@
 (defpackage :logic/sequent
   (:use :cl)
-  (:import-from :logic/formula
-                :format-formula)
+  (:import-from :logic/formula)
   (:export :make-sequent
            :l
            :r
@@ -49,8 +48,8 @@
 
 (defun format-seq (seq n)
   (format nil "H~A: ~{~A~^, ~}~%C~A: ~{~A~^, ~}~%"
-          n (mapcar #'format-formula (l seq))
-          n (mapcar #'format-formula (r seq))))
+          n (l seq)
+          n (r seq)))
 
 (defun print-seq (seq n)
   (format t "~A" (format-seq seq n))

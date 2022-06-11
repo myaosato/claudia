@@ -1,8 +1,7 @@
 (defpackage :logic/formula
   (:use :cl
         :logic/term)
-  (:export :format-formula
-           :∧ :is-∧ :∧-1 :∧-2
+  (:export :∧ :is-∧ :∧-1 :∧-2
            :∨ :is-∨ :∨-1 :∨-2
            :¬ :is-¬ :¬-1
            :→ :is-→ :→-1 :→-2
@@ -23,8 +22,14 @@
 (defgeneric format-formula (formula))
 
 (defclass formula nil nil)
-(defmethod format-formula ((formula formula))
-  (error "format-formula method for type ~A is not defined" (type-of formula)))
+(defmethod print-object ((formula formula) stream)
+  (declare (ignore stream))
+  (error "print-object method for type ~A is not defined" (type-of formula)))
+(defmacro def-print-formula ((formula class) control-string &rest format-arguments)
+  (let ((stream (gensym "STREAM")))
+    `(defmethod print-object ((,formula ,class) ,stream)
+       (format ,stream ,control-string ,@format-arguments))))
+
 
 (defclass ∧ (formula)
   ((∧-1 :initarg :∧-1 :reader ∧-1 :type formula)
@@ -33,8 +38,7 @@
   (make-instance '∧ :∧-1 f1 :∧-2 f2))
 (defun is-∧ (formula)
   (eq (type-of formula) '∧))
-(defmethod format-formula ((formula ∧))
-  (format nil "(~A ∧ ~A)" (format-formula (∧-1 formula)) (format-formula (∧-2 formula))))
+(def-print-formula (formula ∧) "(~A ~A ~A)" '∧ (∧-1 formula) (∧-2 formula))
 
 (defclass ∨ (formula)
   ((∨-1 :initarg :∨-1 :reader ∨-1 :type formula)
@@ -43,8 +47,7 @@
   (make-instance '∨ :∨-1 f1 :∨-2 f2))
 (defun is-∨ (formula)
   (eq (type-of formula) '∨))
-(defmethod format-formula ((formula ∨))
-  (format nil "(~A ∨ ~A)" (format-formula (∨-1 formula)) (format-formula (∨-2 formula))))
+(def-print-formula (formula ∨) "(~A ~A ~A)" '∨ (∨-1 formula) (∨-2 formula))
 
 (defclass ¬ (formula)
   ((¬-1 :initarg :¬-1 :reader ¬-1 :type formula)))
@@ -52,8 +55,7 @@
   (make-instance '¬ :¬-1 f))
 (defun is-¬ (formula)
   (eq (type-of formula) '¬))
-(defmethod format-formula ((formula ¬))
-  (format nil "¬~A" (format-formula (¬-1 formula))))
+(def-print-formula (formula ¬) "(~A ~A)" '¬ (¬-1 formula))
 
 (defclass → (formula)
   ((→-1 :initarg :→-1 :reader →-1 :type formula)
@@ -62,8 +64,7 @@
   (make-instance '→ :→-1 f1 :→-2 f2))
 (defun is-→ (formula)
   (eq (type-of formula) '→))
-(defmethod format-formula ((formula →))
-  (format nil "(~A → ~A)" (format-formula (→-1 formula)) (format-formula (→-2 formula))))
+(def-print-formula (formula →) "(~A ~A ~A)" '→ (→-1 formula) (→-2 formula))
 
 (defclass atomic (formula) nil)
 
@@ -73,16 +74,15 @@
   (make-instance 'prop :name name))
 (defun is-prop (formula)
   (eq (type-of formula) 'prop))
-(defmethod format-formula ((formula prop))
-  (format nil "~A" (name formula)))
+(def-print-formula (formula prop) "#<Prop: ~A>" (name formula))
 
 (defclass predicate (atomic)
   ((name :initarg :name :reader name)
    (terms :initarg :terms :reader terms :type (vector term *))))
 (defun predicate (name arity &rest terms)
+  (declare (type symbol name))
   (make-instance 'predicate :name name :terms (coerce terms `(vector term ,arity))))
 (defmacro def-predicate (name arity)
   `(defun ,name (&rest terms)
      (apply #'predicate ',name ,arity terms)))
-(defmethod format-formula ((formula predicate))
-  (format nil "~A(~{~A~^, ~})" (name formula) (mapcar #'format-term (coerce (terms formula) 'list))))
+(def-print-formula (formula predicate) "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list))

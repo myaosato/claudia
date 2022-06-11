@@ -48,7 +48,7 @@
 ;; A∧B,Γ ⊢ Δ        A∧B,Γ ⊢ Δ        Γ,Σ ⊢ A∧B,Δ,Π 
 (defun and-l (seq op)
   (let ((focus (nth-l 0 seq)))
-    (if (is-∧ focus)
+    (if (typep focus '∧)
         (make-goal (make-sequent (cons (funcall op focus) (cdr (l seq)))
                                  (r seq)))
         (error ""))))
@@ -60,12 +60,12 @@
   (and-l seq #'∧-2))
 
 (defun and-r (seq n m)
-  (let ((f (nth-r 0 seq)))
+  (let ((focus (nth-r 0 seq)))
     ;; TODO (rest (r seq)) => (rest-r seq)
     (with-splited-sequent (cons (l seq) (rest (r seq))) (n (1- m) g s d p)
-      (if (is-∧ f)
-          (make-goal (make-sequent g (cons (∧-1 f) d))
-                     (make-sequent s (cons (∧-2 f) p)))
+      (if (typep focus '∧)
+          (make-goal (make-sequent g (cons (∧-1 focus) d))
+                     (make-sequent s (cons (∧-2 focus) p)))
           (error "")))))
 
 ;; Or
@@ -74,7 +74,7 @@
 ;; Γ ⊢ A∨B,Δ        Γ ⊢ A∨B,Δ        A∨B,Γ,Σ ⊢ Δ,Π 
 (defun or-r (seq op)
   (let ((focus (nth-r 0 seq)))
-    (if (is-∨ focus)
+    (if (typep focus '∨)
         (make-goal (make-sequent (l seq)
                                  (cons (funcall op focus) (cdr (r seq)))))
         (error ""))))
@@ -86,12 +86,12 @@
   (or-r seq #'∨-2))
 
 (defun or-l (seq n m)
-  (let ((f (nth-l 0 seq)))
+  (let ((focus (nth-l 0 seq)))
     ;; TODO (rest (l seq)) => (rest-l seq)
     (with-splited-sequent (cons (rest (l seq)) (r seq)) ((1- n) m g s d p)
-      (if (is-∨ f)
-          (make-goal (make-sequent (cons (∨-1 f) g) d)
-                     (make-sequent (cons (∨-2 f) s) p))
+      (if (typep focus '∨)
+          (make-goal (make-sequent (cons (∨-1 focus) g) d)
+                     (make-sequent (cons (∨-2 focus) s) p))
           (error "")))))
 
 ;; Not
@@ -100,14 +100,14 @@
 ;; ¬A,Γ ⊢ Δ      Γ ⊢ ¬A,Δ
 (defun not-l (seq)
   (let ((focus (nth-l 0 seq)))
-    (if (is-¬ focus)
+    (if (typep focus '¬)
         (make-goal (make-sequent (cdr (l seq))
                                  (cons (¬-1 focus) (r seq))))
         (error ""))))
 
 (defun not-r (seq)
   (let ((focus (nth-r 0 seq)))
-    (if (is-¬ focus)
+    (if (typep focus '¬)
         (make-goal (make-sequent (cons (¬-1 focus) (l seq))
                                  (cdr (r seq))))
         (error ""))))
@@ -118,18 +118,18 @@
 ;; Γ ⊢ A→B,Δ      A→B,Γ,Σ ⊢ Δ,Π
 (defun to-r (seq)
   (let ((focus (nth-r 0 seq)))
-    (if (is-→ focus)
+    (if (typep focus '→)
         (make-goal (make-sequent (cons (→-1 focus) (l seq))
                                  (cons (→-2 focus) (cdr (r seq)))))
       (error ""))))
 
 (defun to-l (seq n m)
-  (let ((f (nth-l 0 seq)))
+  (let ((focus (nth-l 0 seq)))
     ;; TODO (rest (l seq)) => (rest-l seq)
     (with-splited-sequent (cons (rest (l seq)) (r seq)) ((1- n) m g s d p)
-      (if (is-→ f)
-          (make-goal (make-sequent g (cons (→-1 f) d))
-                     (make-sequent (cons (→-2 f) s) p))
+      (if (typep focus '→)
+          (make-goal (make-sequent g (cons (→-1 focus) d))
+                     (make-sequent (cons (→-2 focus) s) p))
           (error "")))))
 
 ;; Weakening
@@ -178,4 +178,3 @@
         (rotatef (nth n r) (nth m r))
         (make-goal (make-sequent (l seq) r)))
       (error "")))
-

@@ -2,11 +2,11 @@
   (:use :cl
         :logic/term
         :logic/pprint)
-  (:export :∧ :is-∧ :∧-1 :∧-2
-           :∨ :is-∨ :∨-1 :∨-2
-           :¬ :is-¬ :¬-1
-           :→ :is-→ :→-1 :→-2
-           :prop :is-prop
+  (:export :∧ :∧-1 :∧-2
+           :∨ :∨-1 :∨-2
+           :¬ :¬-1
+           :→ :→-1 :→-2
+           :prop
            :predicate :def-predicate))
 (in-package :logic/formula)
 
@@ -41,8 +41,6 @@
    (∧-2 :initarg :∧-2 :reader ∧-2 :type formula)))
 (defun ∧ (f1 f2)
   (make-instance '∧ :∧-1 f1 :∧-2 f2))
-(defun is-∧ (formula)
-  (eq (type-of formula) '∧))
 (def-print-formula (formula ∧) "(~A ~A ~A)" '∧ (∧-1 formula) (∧-2 formula))
 (defmethod pprint-formula ((formula ∧) stream)
   (format stream "(~A ∧ ~A)" (pprint-formula (∧-1 formula) nil) (pprint-formula (∧-2 formula) nil)))
@@ -52,8 +50,6 @@
    (∨-2 :initarg :∨-2 :reader ∨-2 :type formula)))
 (defun ∨ (f1 f2)
   (make-instance '∨ :∨-1 f1 :∨-2 f2))
-(defun is-∨ (formula)
-  (eq (type-of formula) '∨))
 (def-print-formula (formula ∨) "(~A ~A ~A)" '∨ (∨-1 formula) (∨-2 formula))
 (defmethod pprint-formula ((formula ∨) stream)
   (format stream "(~A ∨ ~A)" (pprint-formula (∨-1 formula) nil) (pprint-formula (∨-2 formula) nil)))
@@ -62,8 +58,6 @@
   ((¬-1 :initarg :¬-1 :reader ¬-1 :type formula)))
 (defun ¬ (f)
   (make-instance '¬ :¬-1 f))
-(defun is-¬ (formula)
-  (eq (type-of formula) '¬))
 (def-print-formula (formula ¬) "(~A ~A)" '¬ (¬-1 formula))
 (defmethod pprint-formula ((formula ¬) stream)
   (format stream "¬~A" (pprint-formula (¬-1 formula) nil)))
@@ -73,8 +67,6 @@
    (→-2 :initarg :→-2 :reader →-2 :type formula)))
 (defun → (f1 f2)
   (make-instance '→ :→-1 f1 :→-2 f2))
-(defun is-→ (formula)
-  (eq (type-of formula) '→))
 (def-print-formula (formula →) "(~A ~A ~A)" '→ (→-1 formula) (→-2 formula))
 (defmethod pprint-formula ((formula →) stream)
   (format stream "(~A → ~A)" (pprint-formula (→-1 formula) nil) (pprint-formula (→-2 formula) nil)))
@@ -85,8 +77,6 @@
   ((name :initarg :name :reader name)))
 (defun prop (name)
   (make-instance 'prop :name name))
-(defun is-prop (formula)
-  (eq (type-of formula) 'prop))
 (def-print-formula (formula prop) "#<Prop: ~A>" (name formula))
 (defmethod pprint-formula ((formula prop) stream)
   (format stream "~A" (name formula)))

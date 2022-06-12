@@ -2,7 +2,8 @@
   (:use :cl
         :claudia/term
         :claudia/pprint)
-  (:export :∧ :∧-1 :∧-2
+  (:export :formula :formula-list
+           :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
            :¬ :¬-1
            :→ :→-1 :→-2
@@ -33,8 +34,13 @@
 (defmethod pprint-formula ((formula formula) stream)
   (declare (ignore stream))
   (error "pprint-formula method for type ~A is not defined" (type-of formula)))
-(def-claudia-print ('formula stream formula)
+(def-claudia-print (formula) (formula stream)
   (pprint-formula formula stream))
+(defun formula-list-p (thing)
+  (and (listp thing)
+       (every (lambda (x) (typep x 'formula)) thing)))
+(deftype formula-list ()
+  `(satisfies formula-list-p))
 
 (defclass ∧ (formula)
   ((∧-1 :initarg :∧-1 :reader ∧-1 :type formula)
@@ -93,3 +99,4 @@
 (def-print-formula (formula predicate) "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list))
 (defmethod pprint-formula ((formula predicate) stream)
   (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list)))
+

@@ -21,7 +21,7 @@
         (steps (mapcar (lambda (x) `(list ,(nth 0 x) ',(nth 1 x) ,@(nthcdr 2 x)))
                        proof)))
     `(defun ,name ()
-       (let ((,current-goal (make-goal (make-sequent ,antecedent ,succedent))))
+       (let ((,current-goal (make-goal (sequent ,antecedent ,succedent))))
          (format t "~16,,,'-A [GOAL]~%" "")
          (print-goal ,current-goal)
          (loop :for ,step :in (list ,@steps)

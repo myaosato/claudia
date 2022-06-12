@@ -5,8 +5,8 @@
 (in-package :claudia/pprint)
 
 (defparameter print-claudia-print-dispatch (copy-pprint-dispatch nil))
-(defmacro def-claudia-print ((class stream obj) &body body)
-  `(set-pprint-dispatch ,class 
+(defmacro def-claudia-print ((class) (obj stream) &body body)
+  `(set-pprint-dispatch ',class
                         (lambda (,stream ,obj)
                           (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
                             ,@body))

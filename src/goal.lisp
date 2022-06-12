@@ -1,7 +1,7 @@
 (defpackage :claudia/goal
-  (:use :cl)
-  (:import-from :claudia/sequent
-                :print-seq)
+  (:use :cl
+        :claudia/pprint)
+  (:import-from :claudia/sequent)
   (:export :make-goal
            :do-step
            :print-goal))
@@ -25,8 +25,9 @@
       ,@(subseq  current-goal (1+ n)))))
 
 (defun print-goal (goal)
-  (if (null goal)
-      (format t "Complete !!~%")
-      (loop :for seq :in goal
-            :for n :from 0
-            :do (format t "[~A]: ~A~%" n (print-seq seq nil)))))
+  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
+    (if (null goal)
+        (format t "Complete !!~%")
+        (loop :for seq :in goal
+              :for n :from 0
+              :do (format t "[~A]: ~W~%" n seq)))))

@@ -24,7 +24,7 @@
 (defmethod pprint-term ((term term) stream)
   (declare (ignore stream))
   (error "pprint-term method for type ~A is not defined" (type-of term)))
-(def-claudia-print ('term stream term)
+(def-claudia-print (term) (term stream)
   (pprint-term term stream))
 
 (defclass var (term)

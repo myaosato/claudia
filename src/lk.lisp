@@ -3,7 +3,15 @@
         :claudia/formula
         :claudia/sequent
         :claudia/axiom)
-  (:export :id :cut
+  (:shadowing-import-from :claudia/formula
+                          :substitute)
+  (:export :∧ :∧-1 :∧-2
+           :∨ :∨-1 :∨-2
+           :¬ :¬-1
+           :→ :→-1 :→-2
+           :prop :def-predicate
+           ;; 
+           :id :cut
            :and-l1 :and-l2 :and-r
            :or-l :or-r1 :or-r2
            :not-l :not-r

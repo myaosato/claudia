@@ -2,6 +2,8 @@
   (:use :cl
         :claudia/term
         :claudia/pprint)
+  (:shadowing-import-from :claudia/term
+                          :substitute)
   (:export :formula :formula-list
            :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
@@ -9,7 +11,7 @@
            :→ :→-1 :→-2
            :prop
            :predicate :def-predicate :constructor
-           :substitute))
+           :substitute :substitutable))
 (in-package :claudia/formula)
 
 ;; ****************************************************************
@@ -42,6 +44,8 @@
   `(satisfies formula-list-p))
 (defmethod substitute ((place formula) var term)
   (error "substitute method for type ~A is not defined" (type-of place)))
+(defmethod substitutable ((place formula) var term)
+  (error "substitutable method for type ~A is not defined" (type-of place)))
 
 ;; ∧
 (defclass ∧ (formula)
@@ -56,6 +60,8 @@
   (setf (%free-vars formula) (union (free-vars (∧-1 formula)) (free-vars (∧-2 formula)))))
 (defmethod substitute ((place ∧) (var var) (term term))
   (∧ (substitute (∧-1 place) var term) (substitute (∧-2 place) var term)))
+(defmethod substitutable ((place ∧) (var var) (term term))
+  (and (substitutable (∧-1 place) var term) (substitutable (∧-2 place) var term)))
 
 ;; ∨
 (defclass ∨ (formula)
@@ -70,6 +76,8 @@
   (setf (%free-vars formula) (union (free-vars (∨-1 formula)) (free-vars (∨-2 formula)))))
 (defmethod substitute ((place ∨) (var var) (term term))
   (∨ (substitute (∨-1 place) var term) (substitute (∨-2 place) var term)))
+(defmethod substitutable ((place ∨) (var var) (term term))
+  (and (substitutable (∨-1 place) var term) (substitutable (∨-2 place) var term)))
 
 ;; ¬
 (defclass ¬ (formula)
@@ -81,6 +89,10 @@
   (format stream "¬~A" (pprint-formula (¬-1 formula) nil)))
 (defmethod initialize-instance :after ((formula ¬) &key)
   (setf (%free-vars formula) (free-vars (¬-1 formula))))
+(defmethod substitute ((place ¬) (var var) (term term))
+  (¬ (substitute (¬-1 place) var term)))
+(defmethod substitutable ((place ¬) (var var) (term term))
+  (substitutable (¬-1 place) var term))
 
 ;; →
 (defclass → (formula)
@@ -95,10 +107,14 @@
   (setf (%free-vars formula) (union (free-vars (→-1 formula)) (free-vars (→-2 formula)))))
 (defmethod substitute ((place →) (var var) (term term))
   (→ (substitute (→-1 place) var term) (substitute (→-2 place) var term)))
+(defmethod substitutable ((place →) (var var) (term term))
+  (and (substitutable (→-1 place) var term) (substitutable (→-2 place) var term)))
 
 
 ;;;; atomic
 (defclass atomic (formula) nil)
+(defmethod substitutable ((place atomic) (var var) (term term))
+  t)
 
 ;; prop
 (defclass prop (atomic)

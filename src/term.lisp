@@ -1,9 +1,10 @@
 (defpackage :claudia/term
   (:use :cl
         :claudia/pprint)
+  (:shadow :substitute)
   (:export :term :free-vars :var :const :constructor
            :func :def-func
-           :substitute))
+           :substitute :substitutable))
 (in-package :claudia/term)
 
 ;; ****************************************************************
@@ -29,9 +30,8 @@
   (pprint-term term stream))
 (defmethod substitute ((place term) var term)
   (error "substitute method for type ~A is not defined" (type-of place)))
-(defmethod substitute ((place term) var term)
-  (error "substitute method for type ~A is not defined" (type-of place)))
-
+(defmethod substitutable ((place term) var term)
+  (error "substitutable method for type ~A is not defined" (type-of place)))
 
 ;; var
 (defclass var (term)
@@ -47,6 +47,9 @@
   (if (eq place var)
       term
       place))
+
+(defmethod substitutable ((place term) (var var) (term term))
+  t)
 
 ;; const-val
 (defclass const-val (term)

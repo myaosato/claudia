@@ -11,7 +11,6 @@
            :nth-r
            :empty-l
            :empty-r
-           :format-seq
            :print-seq
            :with-splited-sequent))
 (in-package :claudia/sequent)
@@ -47,17 +46,11 @@
 (defun empty-r (seq)
   (null (r seq)))
 
-(defun format-seq (seq n)
+(defun print-seq (seq stream)
   (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-    (format nil "H~A: ~{~:W~^, ~}~%C~A: ~{~:W~^, ~}~%"
-            n (l seq)
-            n (r seq))))
+    (format stream "~{~:W~^, ~}  ⊢  ~{~:W~^, ~}" (l seq) (r seq))))
 
-(defun print-seq (seq n)
-  (format t "~A" (format-seq seq n))
-  seq)
-
-;; ll0, ll1,... lln, lr0, lr1,... |- rl0, rl1,... rlm, rr0, rr1,...
+;; ll0, ll1,... lln, lr0, lr1,... ⊢ rl0, rl1,... rlm, rr0, rr1,...
 (defmacro with-splited-sequent (sequent (n m ll lr rl rr) &body body)
   (let ((seq (gensym "SEQUENT-"))
         (n% (gensym "N-")))

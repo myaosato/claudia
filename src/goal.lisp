@@ -29,4 +29,4 @@
       (format t "Complete !!~%")
       (loop :for seq :in goal
             :for n :from 0
-            :do (print-seq seq n))))
+            :do (format t "[~A]: ~A~%" n (print-seq seq nil)))))

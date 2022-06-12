@@ -49,7 +49,7 @@
 (def-claudia-print (sequent) (seq stream)
   (format stream "~{~:W~^, ~}  ⊢  ~{~:W~^, ~}" (l seq) (r seq)))
 
-;; ll0, ll1,... lln, lr0, lr1,... ⊢ rl0, rl1,... rlm, rr0, rr1,...
+;; ll0, ll1,... lln-1, lr0, lr1,... ⊢ rl0, rl1,... rlm-1, rr0, rr1,...
 (defmacro with-splited-sequent (sequent (n m ll lr rl rr) &body body)
   (let ((seq (gensym "SEQUENT-"))
         (n% (gensym "N-")))

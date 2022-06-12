@@ -2,7 +2,8 @@
   (:use :cl
         :claudia/pprint)
   (:export :term :free-vars :var :const :constructor
-           :func :def-func))
+           :func :def-func
+           :assignment))
 (in-package :claudia/term)
 
 ;; ****************************************************************
@@ -12,7 +13,6 @@
 ;; term := const | var | func term*
 ;;
 ;; ****************************************************************
-
 (defclass term nil
   ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
 (defmethod print-object ((term term) stream)
@@ -27,7 +27,10 @@
   (error "pprint-term method for type ~A is not defined" (type-of term)))
 (def-claudia-print (term) (term stream)
   (pprint-term term stream))
+(defmethod assignment ((place term) var term)
+  (error "assignment method for type ~A is not defined" (type-of place)))
 
+;; var
 (defclass var (term)
   ((name :initarg :name :reader name)))
 (defmethod initialize-instance :after ((term var) &key)
@@ -37,7 +40,12 @@
 (def-print-term (term var) "#<Var: ~A>" (name term))
 (defmethod pprint-term ((term var) stream)
   (format stream "~A" (name term)))
+(defmethod assignment ((place var) (var var) (term term))
+  (if (eq place var)
+      term
+      place))
 
+;; const-val
 (defclass const-val (term)
   ((name :initarg :name :reader name)))
 (defun const (name)
@@ -45,7 +53,10 @@
 (def-print-term (term  const-val) "#<Const: ~A>" (name term))
 (defmethod pprint-term ((term const-val) stream)
   (format stream "~A" (name term)))
+(defmethod assignment ((place const-val) (var var) (term term))
+  place)
 
+;; func
 (defclass func (term)
   ((name :initarg :name :reader name)
    (terms :initarg :terms :reader terms :type (vector term *))
@@ -67,11 +78,14 @@
       (format stream "(~:W ~A ~:W)"
               (aref (terms term) 0) (name term) (aref (terms term) 1))
       (format stream "~A(~{~:W~^, ~})" (name term) (coerce (terms term) 'list))))
+(defmethod assignment ((place func) (var var) (term term))
+  (apply (constructor place)
+         (mapcar (lambda (x) (assignment x var term)) (terms place))))
 
+;; const (meta type)
 (defun func-const*-p (thing)
   (and (typep thing 'func)
        (typep (terms thing) '(simple-array const (*)))))
-
 (deftype const ()
   `(or const-val
        (satisfies func-const*-p)))

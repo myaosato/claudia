@@ -8,7 +8,8 @@
            :¬ :¬-1
            :→ :→-1 :→-2
            :prop
-           :predicate :def-predicate :constructor))
+           :predicate :def-predicate :constructor
+           :assignment))
 (in-package :claudia/formula)
 
 ;; ****************************************************************
@@ -39,6 +40,8 @@
        (every (lambda (x) (typep x 'formula)) thing)))
 (deftype formula-list ()
   `(satisfies formula-list-p))
+(defmethod assignment ((place formula) var term)
+  (error "assignment method for type ~A is not defined" (type-of place)))
 
 ;; ∧
 (defclass ∧ (formula)
@@ -51,6 +54,8 @@
   (format stream "(~A ∧ ~A)" (pprint-formula (∧-1 formula) nil) (pprint-formula (∧-2 formula) nil)))
 (defmethod initialize-instance :after ((formula ∧) &key)
   (setf (%free-vars formula) (union (free-vars (∧-1 formula)) (free-vars (∧-2 formula)))))
+(defmethod assignment ((place ∧) (var var) (term term))
+  (∧ (assignment (∧-1 place) var term) (assignment (∧-2 place) var term)))
 
 ;; ∨
 (defclass ∨ (formula)
@@ -63,6 +68,8 @@
   (format stream "(~A ∨ ~A)" (pprint-formula (∨-1 formula) nil) (pprint-formula (∨-2 formula) nil)))
 (defmethod initialize-instance :after ((formula ∨) &key)
   (setf (%free-vars formula) (union (free-vars (∨-1 formula)) (free-vars (∨-2 formula)))))
+(defmethod assignment ((place ∨) (var var) (term term))
+  (∨ (assignment (∨-1 place) var term) (assignment (∨-2 place) var term)))
 
 ;; ¬
 (defclass ¬ (formula)
@@ -86,10 +93,14 @@
   (format stream "(~A → ~A)" (pprint-formula (→-1 formula) nil) (pprint-formula (→-2 formula) nil)))
 (defmethod initialize-instance :after ((formula →) &key)
   (setf (%free-vars formula) (union (free-vars (→-1 formula)) (free-vars (→-2 formula)))))
+(defmethod assignment ((place →) (var var) (term term))
+  (→ (assignment (→-1 place) var term) (assignment (→-2 place) var term)))
 
-;; atomic
+
+;;;; atomic
 (defclass atomic (formula) nil)
 
+;; prop
 (defclass prop (atomic)
   ((name :initarg :name :reader name)))
 (defun prop (name)
@@ -97,7 +108,10 @@
 (def-print-formula (formula prop) "#<Prop: ~A>" (name formula))
 (defmethod pprint-formula ((formula prop) stream)
   (format stream "~A" (name formula)))
+(defmethod assignment ((place prop) (var var) (term term))
+  place)
 
+;; predicate
 (defclass predicate (atomic)
   ((name :initarg :name :reader name)
    (terms :initarg :terms :reader terms :type (vector term *))
@@ -116,3 +130,6 @@
   (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list)))
 (defmethod initialize-instance :after ((formula predicate) &key)
   (setf (%free-vars formula) (reduce #'union (mapcar #'free-vars (coerce (terms formula) 'list)))))
+(defmethod assignment ((place predicate) (var var) (term term))
+  (apply (constructor place)
+         (mapcar (lambda (x) (assignment x var term)) (terms place))))

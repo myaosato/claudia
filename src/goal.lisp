@@ -23,6 +23,10 @@
       (format stream "~{[~A]: ~W~^~%~}" (loop :for seq :in (sequents goal)
                                               :for n :from 0
                                               :append (list n seq)))))
+(defmethod print-object ((goal goal) stream)
+  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
+    (format stream "#<GOAL: ~W >" goal)))
+
 (defun nth-seq (n goal)
   (nth n (sequents goal)))
 

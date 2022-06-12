@@ -25,6 +25,9 @@
        (every (lambda (x) (typep x 'sequent)) thing)))
 (deftype sequent-list ()
   `(satisfies sequent-list-p))
+(defmethod print-object ((seq sequent) stream)
+  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
+    (format stream "#<SEQUENT: ~{~:W~^, ~}  ⊢  ~{~:W~^, ~} >" (l seq) (r seq))))
 
 (defun length-l (seq)
   (length (l seq)))

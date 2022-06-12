@@ -3,7 +3,7 @@
 proof assistant ?
 
 ```console
-CL-USER> (claudia/claudia::law-of-exclded-middle)
+CL-USER> (claudia/examples/cpl:law-of-exclded-middle)
 ↓↓↓ GOAL ↓↓↓ 
 H0: 
 C0: (A ∨ ¬A)
@@ -25,5 +25,4 @@ C0: A
 ↓↓↓ ID ↓↓↓ 
 Complete !!
 NIL
-CL-USER> 
 ```

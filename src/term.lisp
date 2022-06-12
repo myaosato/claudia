@@ -1,7 +1,7 @@
 (defpackage :claudia/term
   (:use :cl
         :claudia/pprint)
-  (:export :term :free-vars :var :const
+  (:export :term :free-vars :var :const :constructor
            :func :def-func))
 (in-package :claudia/term)
 
@@ -48,15 +48,19 @@
 
 (defclass func (term)
   ((name :initarg :name :reader name)
-   (terms :initarg :terms :reader terms :type (vector term *))))
+   (terms :initarg :terms :reader terms :type (vector term *))
+   (constructor :initarg :constructor :reader constructor)))
 (defmethod initialize-instance :after ((term func) &key)
   (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (coerce (terms term) 'list)))))
-(defun func (name arity &rest terms)
-  (declare (type symbol name))
-  (make-instance 'func :name name :terms (coerce terms `(vector term ,arity))))
 (defmacro def-func (name arity)
-  `(defun ,name (&rest terms)
-     (apply #'func ',name ,arity terms)))
+  (declare (type symbol name))
+  (let ((c (gensym "CONSTRUCTOR-")))
+    `(labels ((,c (name constructor &rest terms)
+                (make-instance 'func
+                               :name name
+                               :terms (coerce terms '(vector term ,arity))
+                               :constructor constructor)))
+       (defun ,name (&rest terms) (apply #',c ',name #',c terms)))))
 (def-print-term (term func) "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list))
 (defmethod pprint-term ((term func) stream)
   (if (= (length (terms term)) 2)

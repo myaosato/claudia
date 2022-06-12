@@ -8,7 +8,7 @@
            :¬ :¬-1
            :→ :→-1 :→-2
            :prop
-           :predicate :def-predicate))
+           :predicate :def-predicate :constructor))
 (in-package :claudia/formula)
 
 ;; ****************************************************************
@@ -100,13 +100,17 @@
 
 (defclass predicate (atomic)
   ((name :initarg :name :reader name)
-   (terms :initarg :terms :reader terms :type (vector term *))))
-(defun predicate (name arity &rest terms)
-  (declare (type symbol name))
-  (make-instance 'predicate :name name :terms (coerce terms `(vector term ,arity))))
+   (terms :initarg :terms :reader terms :type (vector term *))
+   (constructor :initarg :constructor :reader constructor)))
 (defmacro def-predicate (name arity)
-  `(defun ,name (&rest terms)
-     (apply #'predicate ',name ,arity terms)))
+  (declare (type symbol name))
+  (let ((c (gensym "CONSTRUCTOR-")))
+    `(labels ((,c (name constructor &rest terms)
+                (make-instance 'predicate
+                               :name name
+                               :terms (coerce terms '(vector term ,arity))
+                               :constructor constructor)))
+       (defun ,name (&rest terms) (apply #',c ',name #',c terms)))))
 (def-print-formula (formula predicate) "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list))
 (defmethod pprint-formula ((formula predicate) stream)
   (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list)))

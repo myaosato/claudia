@@ -3,7 +3,7 @@
         :claudia/pprint)
   (:import-from :claudia/formula
                 :formula-list)
-  (:export :sequent
+  (:export :sequent :sequent-list
            :l :r
            :length-l :length-r
            :nth-l :nth-r
@@ -20,6 +20,11 @@
    (succedent :initarg :succedent :accessor r :type formula-list)))
 (defun sequent (antecedent succedent)
   (make-instance 'sequent :antecedent antecedent :succedent succedent))
+(defun sequent-list-p (thing)
+  (and (listp thing)
+       (every (lambda (x) (typep x 'sequent)) thing)))
+(deftype sequent-list ()
+  `(satisfies sequent-list-p))
 
 (defun length-l (seq)
   (length (l seq)))

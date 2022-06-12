@@ -14,5 +14,5 @@
 (defmacro def-axiom (name lambda-list &body condition)
   `(defun ,name ,lambda-list
      (if (progn ,@condition)
-         (list t)
+         nil
          (error ""))))

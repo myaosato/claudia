@@ -9,6 +9,8 @@
            :∨ :∨-1 :∨-2
            :¬ :¬-1
            :→ :→-1 :→-2
+           :∀ :∀-var :∀-formula
+           :∃ :∃-var :∃-formula
            :prop
            :predicate :def-predicate :constructor
            :substitute :substitutable))
@@ -55,7 +57,7 @@
   (make-instance '∧ :∧-1 f1 :∧-2 f2))
 (def-print-formula (formula ∧) "(~A ~A ~A)" '∧ (∧-1 formula) (∧-2 formula))
 (defmethod pprint-formula ((formula ∧) stream)
-  (format stream "(~A ∧ ~A)" (pprint-formula (∧-1 formula) nil) (pprint-formula (∧-2 formula) nil)))
+  (format stream "(~W ∧ ~W)" (∧-1 formula) (∧-2 formula)))
 (defmethod initialize-instance :after ((formula ∧) &key)
   (setf (%free-vars formula) (union (free-vars (∧-1 formula)) (free-vars (∧-2 formula)))))
 (defmethod substitute ((place ∧) (var var) (term term))
@@ -71,7 +73,7 @@
   (make-instance '∨ :∨-1 f1 :∨-2 f2))
 (def-print-formula (formula ∨) "(~A ~A ~A)" '∨ (∨-1 formula) (∨-2 formula))
 (defmethod pprint-formula ((formula ∨) stream)
-  (format stream "(~A ∨ ~A)" (pprint-formula (∨-1 formula) nil) (pprint-formula (∨-2 formula) nil)))
+  (format stream "(~W ∨ ~W)" (∨-1 formula) (∨-2 formula)))
 (defmethod initialize-instance :after ((formula ∨) &key)
   (setf (%free-vars formula) (union (free-vars (∨-1 formula)) (free-vars (∨-2 formula)))))
 (defmethod substitute ((place ∨) (var var) (term term))
@@ -102,7 +104,7 @@
   (make-instance '→ :→-1 f1 :→-2 f2))
 (def-print-formula (formula →) "(~A ~A ~A)" '→ (→-1 formula) (→-2 formula))
 (defmethod pprint-formula ((formula →) stream)
-  (format stream "(~A → ~A)" (pprint-formula (→-1 formula) nil) (pprint-formula (→-2 formula) nil)))
+  (format stream "(~W → ~W)" (→-1 formula) (→-2 formula)))
 (defmethod initialize-instance :after ((formula →) &key)
   (setf (%free-vars formula) (union (free-vars (→-1 formula)) (free-vars (→-2 formula)))))
 (defmethod substitute ((place →) (var var) (term term))
@@ -110,6 +112,47 @@
 (defmethod substitutable ((place →) (var var) (term term))
   (and (substitutable (→-1 place) var term) (substitutable (→-2 place) var term)))
 
+;; ∀
+(defclass ∀ (formula)
+  ((∀-var :initarg :var :reader ∀-var :type var)
+   (∀-formula :initarg :formula :reader ∀-formula :type formula)))
+(defun ∀ (var formula)
+  (make-instance '∀ :var var :formula formula))
+(def-print-formula (formula ∀) "(~A ~A ~A)" '∀ (∀-var formula) (∀-formula formula))
+(defmethod pprint-formula ((formula ∀) stream)
+  (format stream "∀~W(~W)" (∀-var formula) (∀-formula formula)))
+(defmethod initialize-instance :after ((formula ∀) &key)
+  (setf (%free-vars formula) (remove (∀-var formula) (free-vars (∀-formula formula)) :test #'eq)))
+(defmethod substitute ((place ∀) (var var) (term term))
+  (if (eq (∀-var place) var)
+      place
+      (∀ (∀-var place) (substitute (∀-formula place) var term))))
+(defmethod substitutable ((place ∀) (var var) (term term))
+  (or (not (eq (∀-var place) var))
+      (not (find var (free-vars (∀-formula place)) :test #'eq))
+      (and (substitutable (∀-formula place) var term)
+           (not (find (∀-var place) (free-vars term)):test #'eq))))
+
+;; ∃
+(defclass ∃ (formula)
+  ((∃-var :initarg :var :reader ∃-var :type var)
+   (∃-formula :initarg :formula :reader ∃-formula :type formula)))
+(defun ∃ (var formula)
+  (make-instance '∃ :var var :fomula formula))
+(def-print-formula (formula ∃) "(~A ~A ~A)" '∃ (∃-var formula) (∃-formula formula))
+(defmethod pprint-formula ((formula ∃) stream)
+  (format stream "∃~W(~W)" (∃-var formula) (∃-formula formula)))
+(defmethod initialize-instance :after ((formula ∃) &key)
+  (setf (%free-vars formula) (remove (∃-var formula) (free-vars (∃-formula formula)) :test #'eq)))
+(defmethod substitute ((place ∃) (var var) (term term))
+  (if (eq (∃-var place) var)
+      place
+      (∃ (∃-var place) (substitute (∃-formula place) var term))))
+(defmethod substitutable ((place ∃) (var var) (term term))
+  (or (not (eq (∃-var place) var))
+      (not (find var (free-vars (∃-formula place)) :test #'eq))
+      (and (substitutable (∃-formula place) var term)
+           (not (find (∃-var place) (free-vars term)):test #'eq))))
 
 ;;;; atomic
 (defclass atomic (formula) nil)
@@ -134,13 +177,13 @@
    (constructor :initarg :constructor :reader constructor)))
 (defmacro def-predicate (name arity)
   (declare (type symbol name))
-  (let ((c (gensym "CONSTRUCTOR-")))
-    `(labels ((,c (name constructor &rest terms)
-                (make-instance 'predicate
-                               :name name
-                               :terms (coerce terms '(vector term ,arity))
-                               :constructor constructor)))
-       (defun ,name (&rest terms) (apply #',c ',name #',c terms)))))
+  `(labels ((%c (name constructor &rest terms)
+              (make-instance 'predicate
+                             :name name
+                             :terms (coerce terms '(vector term ,arity))
+                             :constructor constructor))
+            (c (&rest terms) (apply #'%c ',name #'c terms)))
+     (defun ,name (&rest terms) (apply #'%c ',name #'c terms))))
 (def-print-formula (formula predicate) "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list))
 (defmethod pprint-formula ((formula predicate) stream)
   (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list)))
@@ -148,4 +191,4 @@
   (setf (%free-vars formula) (reduce #'union (mapcar #'free-vars (coerce (terms formula) 'list)))))
 (defmethod substitute ((place predicate) (var var) (term term))
   (apply (constructor place)
-         (mapcar (lambda (x) (substitute x var term)) (terms place))))
+         (mapcar (lambda (x) (substitute x var term)) (coerce (terms place) 'list))))

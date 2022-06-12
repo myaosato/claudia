@@ -71,13 +71,13 @@
   (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (coerce (terms term) 'list)))))
 (defmacro def-func (name arity)
   (declare (type symbol name))
-  (let ((c (gensym "CONSTRUCTOR-")))
-    `(labels ((,c (name constructor &rest terms)
-                (make-instance 'func
-                               :name name
-                               :terms (coerce terms '(vector term ,arity))
-                               :constructor constructor)))
-       (defun ,name (&rest terms) (apply #',c ',name #',c terms)))))
+  `(labels ((%c (name constructor &rest terms)
+              (make-instance 'func
+                             :name name
+                             :terms (coerce terms '(vector term ,arity))
+                             :constructor constructor))
+            (c (&rest terms) (apply #'%c ',name #'c terms)))
+     (defun ,name (&rest terms) (apply #'%c ',name #'c terms))))
 (def-print-term (term func) "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list))
 (defmethod pprint-term ((term func) stream)
   (if (= (length (terms term)) 2)
@@ -86,7 +86,7 @@
       (format stream "~A(~{~:W~^, ~})" (name term) (coerce (terms term) 'list))))
 (defmethod substitute ((place func) (var var) (term term))
   (apply (constructor place)
-         (mapcar (lambda (x) (substitute x var term)) (terms place))))
+         (mapcar (lambda (x) (substitute x var term)) (coerce (terms place) 'list))))
 
 ;; const (meta type)
 (defun func-const*-p (thing)
@@ -95,3 +95,15 @@
 (deftype const ()
   `(or const-val
        (satisfies func-const*-p)))
+
+(defmacro with-terms (term-spec-list &body body)
+  `(let (,@(mapcar (lambda (term-spec)
+                     (list (car term-spec)
+                           (cond ((eq (cadr term-spec) :var)
+                                  (var (car term-spec)))
+                                 ((eq (cadr term-spec) :const)
+                                  (const (car term-spec)))
+                                 (t (error "invalid term-spec, term-spec := (list symbol (or :const :var))")))))
+                   term-spec-list))
+     ,@body))
+  

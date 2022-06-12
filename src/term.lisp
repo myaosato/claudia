@@ -3,7 +3,7 @@
         :claudia/pprint)
   (:export :term :free-vars :var :const :constructor
            :func :def-func
-           :assignment))
+           :substitute))
 (in-package :claudia/term)
 
 ;; ****************************************************************
@@ -27,8 +27,11 @@
   (error "pprint-term method for type ~A is not defined" (type-of term)))
 (def-claudia-print (term) (term stream)
   (pprint-term term stream))
-(defmethod assignment ((place term) var term)
-  (error "assignment method for type ~A is not defined" (type-of place)))
+(defmethod substitute ((place term) var term)
+  (error "substitute method for type ~A is not defined" (type-of place)))
+(defmethod substitute ((place term) var term)
+  (error "substitute method for type ~A is not defined" (type-of place)))
+
 
 ;; var
 (defclass var (term)
@@ -40,7 +43,7 @@
 (def-print-term (term var) "#<Var: ~A>" (name term))
 (defmethod pprint-term ((term var) stream)
   (format stream "~A" (name term)))
-(defmethod assignment ((place var) (var var) (term term))
+(defmethod substitute ((place var) (var var) (term term))
   (if (eq place var)
       term
       place))
@@ -53,7 +56,7 @@
 (def-print-term (term  const-val) "#<Const: ~A>" (name term))
 (defmethod pprint-term ((term const-val) stream)
   (format stream "~A" (name term)))
-(defmethod assignment ((place const-val) (var var) (term term))
+(defmethod substitute ((place const-val) (var var) (term term))
   place)
 
 ;; func
@@ -78,9 +81,9 @@
       (format stream "(~:W ~A ~:W)"
               (aref (terms term) 0) (name term) (aref (terms term) 1))
       (format stream "~A(~{~:W~^, ~})" (name term) (coerce (terms term) 'list))))
-(defmethod assignment ((place func) (var var) (term term))
+(defmethod substitute ((place func) (var var) (term term))
   (apply (constructor place)
-         (mapcar (lambda (x) (assignment x var term)) (terms place))))
+         (mapcar (lambda (x) (substitute x var term)) (terms place))))
 
 ;; const (meta type)
 (defun func-const*-p (thing)

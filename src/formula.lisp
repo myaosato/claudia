@@ -20,10 +20,8 @@
 ;; formula := formula ∧ formula | formula ∨ formula | ¬ formula | atomic
 ;;
 ;; ****************************************************************
-
-(defgeneric format-formula (formula))
-
-(defclass formula nil nil)
+(defclass formula nil
+  ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
 (defmethod print-object ((formula formula) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of formula)))
@@ -42,6 +40,7 @@
 (deftype formula-list ()
   `(satisfies formula-list-p))
 
+;; ∧
 (defclass ∧ (formula)
   ((∧-1 :initarg :∧-1 :reader ∧-1 :type formula)
    (∧-2 :initarg :∧-2 :reader ∧-2 :type formula)))
@@ -50,7 +49,10 @@
 (def-print-formula (formula ∧) "(~A ~A ~A)" '∧ (∧-1 formula) (∧-2 formula))
 (defmethod pprint-formula ((formula ∧) stream)
   (format stream "(~A ∧ ~A)" (pprint-formula (∧-1 formula) nil) (pprint-formula (∧-2 formula) nil)))
+(defmethod initialize-instance :after ((formula ∧) &key)
+  (setf (%free-vars formula) (union (free-vars (∧-1 formula)) (free-vars (∧-2 formula)))))
 
+;; ∨
 (defclass ∨ (formula)
   ((∨-1 :initarg :∨-1 :reader ∨-1 :type formula)
    (∨-2 :initarg :∨-2 :reader ∨-2 :type formula)))
@@ -59,7 +61,10 @@
 (def-print-formula (formula ∨) "(~A ~A ~A)" '∨ (∨-1 formula) (∨-2 formula))
 (defmethod pprint-formula ((formula ∨) stream)
   (format stream "(~A ∨ ~A)" (pprint-formula (∨-1 formula) nil) (pprint-formula (∨-2 formula) nil)))
+(defmethod initialize-instance :after ((formula ∨) &key)
+  (setf (%free-vars formula) (union (free-vars (∨-1 formula)) (free-vars (∨-2 formula)))))
 
+;; ¬
 (defclass ¬ (formula)
   ((¬-1 :initarg :¬-1 :reader ¬-1 :type formula)))
 (defun ¬ (f)
@@ -67,7 +72,10 @@
 (def-print-formula (formula ¬) "(~A ~A)" '¬ (¬-1 formula))
 (defmethod pprint-formula ((formula ¬) stream)
   (format stream "¬~A" (pprint-formula (¬-1 formula) nil)))
+(defmethod initialize-instance :after ((formula ¬) &key)
+  (setf (%free-vars formula) (free-vars (¬-1 formula))))
 
+;; →
 (defclass → (formula)
   ((→-1 :initarg :→-1 :reader →-1 :type formula)
    (→-2 :initarg :→-2 :reader →-2 :type formula)))
@@ -76,7 +84,10 @@
 (def-print-formula (formula →) "(~A ~A ~A)" '→ (→-1 formula) (→-2 formula))
 (defmethod pprint-formula ((formula →) stream)
   (format stream "(~A → ~A)" (pprint-formula (→-1 formula) nil) (pprint-formula (→-2 formula) nil)))
+(defmethod initialize-instance :after ((formula →) &key)
+  (setf (%free-vars formula) (union (free-vars (→-1 formula)) (free-vars (→-2 formula)))))
 
+;; atomic
 (defclass atomic (formula) nil)
 
 (defclass prop (atomic)
@@ -99,4 +110,5 @@
 (def-print-formula (formula predicate) "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list))
 (defmethod pprint-formula ((formula predicate) stream)
   (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list)))
-
+(defmethod initialize-instance :after ((formula predicate) &key)
+  (setf (%free-vars formula) (reduce #'union (mapcar #'free-vars (coerce (terms formula) 'list)))))

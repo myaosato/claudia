@@ -1,7 +1,7 @@
 (defpackage :claudia/term
   (:use :cl
         :claudia/pprint)
-  (:export :term :var :const
+  (:export :term :free-vars :var :const
            :func :def-func))
 (in-package :claudia/term)
 
@@ -13,7 +13,8 @@
 ;;
 ;; ****************************************************************
 
-(defclass term nil nil)
+(defclass term nil
+  ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
 (defmethod print-object ((term term) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of term)))
@@ -29,6 +30,8 @@
 
 (defclass var (term)
   ((name :initarg :name :reader name)))
+(defmethod initialize-instance :after ((term var) &key)
+  (setf (%free-vars term) (list term)))
 (defun var (name)
   (make-instance 'var :name name))
 (def-print-term (term var) "#<Var: ~A>" (name term))
@@ -46,6 +49,8 @@
 (defclass func (term)
   ((name :initarg :name :reader name)
    (terms :initarg :terms :reader terms :type (vector term *))))
+(defmethod initialize-instance :after ((term func) &key)
+  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (coerce (terms term) 'list)))))
 (defun func (name arity &rest terms)
   (declare (type symbol name))
   (make-instance 'func :name name :terms (coerce terms `(vector term ,arity))))

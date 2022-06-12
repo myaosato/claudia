@@ -1,9 +1,9 @@
-# logic
+# Claudia
 
-WIP
+proof assistant ?
 
 ```console
-CL-USER> (logic/logic::law-of-exclded-middle)
+CL-USER> (claudia/claudia::law-of-exclded-middle)
 ↓↓↓ GOAL ↓↓↓ 
 H0: 
 C0: (A ∨ ¬A)

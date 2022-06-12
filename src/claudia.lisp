@@ -1,11 +1,11 @@
-(defpackage :logic/logic
+(defpackage :claudia/claudia
   (:use :cl
-        :logic/formula
-        :logic/sequent
-        :logic/goal
-        :logic/axiom
-        :logic/lk))
-(in-package :logic/logic)
+        :claudia/formula
+        :claudia/sequent
+        :claudia/goal
+        :claudia/axiom
+        :claudia/lk))
+(in-package :claudia/claudia)
 
 ; Proof: https://gist.github.com/myaosato/fd198c9c211f541d6349f8df7ad899a7
 

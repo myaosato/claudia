@@ -1,9 +1,9 @@
-(defpackage :logic/lk
+(defpackage :claudia/lk
   (:use :cl
-        :logic/formula
-        :logic/sequent
-        :logic/goal
-        :logic/axiom)
+        :claudia/formula
+        :claudia/sequent
+        :claudia/goal
+        :claudia/axiom)
   (:export :id :cut
            :and-l1 :and-l2 :and-r
            :or-l :or-r1 :or-r2
@@ -12,7 +12,7 @@
            :wl :wr
            :cl :cr
            :pl :pr))
-(in-package :logic/lk)
+(in-package :claudia/lk)
 
 ;; ****************************************************************
 ;; LK

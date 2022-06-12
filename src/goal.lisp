@@ -1,11 +1,11 @@
-(defpackage :logic/goal
+(defpackage :claudia/goal
   (:use :cl)
-  (:import-from :logic/sequent
+  (:import-from :claudia/sequent
                 :print-seq)
   (:export :make-goal
            :do-step
            :print-goal))
-(in-package :logic/goal)
+(in-package :claudia/goal)
 
 ;; ****************************************************************
 ;; goal

@@ -1,13 +1,13 @@
-(defpackage :logic/pprint
+(defpackage :claudia/pprint
   (:use :cl)
-  (:export :print-logic-print-dispatch
-           :def-logic-print))
-(in-package :logic/pprint)
+  (:export :print-claudia-print-dispatch
+           :def-claudia-print))
+(in-package :claudia/pprint)
 
-(defparameter print-logic-print-dispatch (copy-pprint-dispatch nil))
-(defmacro def-logic-print ((class stream obj) &body body)
+(defparameter print-claudia-print-dispatch (copy-pprint-dispatch nil))
+(defmacro def-claudia-print ((class stream obj) &body body)
   `(set-pprint-dispatch ,class 
                         (lambda (,stream ,obj)
-                          (let ((*print-pprint-dispatch* print-logic-print-dispatch))
+                          (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
                             ,@body))
-                        0 print-logic-print-dispatch))
+                        0 print-claudia-print-dispatch))

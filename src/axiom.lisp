@@ -1,7 +1,7 @@
-(defpackage :logic/axiom
+(defpackage :claudia/axiom
   (:use :cl)
   (:export :def-axiom))
-(in-package :logic/axiom)
+(in-package :claudia/axiom)
 
 ;; ****************************************************************
 ;; Axiom

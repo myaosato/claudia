@@ -1,14 +1,14 @@
-(defpackage :logic/formula
+(defpackage :claudia/formula
   (:use :cl
-        :logic/term
-        :logic/pprint)
+        :claudia/term
+        :claudia/pprint)
   (:export :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
            :¬ :¬-1
            :→ :→-1 :→-2
            :prop
            :predicate :def-predicate))
-(in-package :logic/formula)
+(in-package :claudia/formula)
 
 ;; ****************************************************************
 ;; meta data type
@@ -33,7 +33,7 @@
 (defmethod pprint-formula ((formula formula) stream)
   (declare (ignore stream))
   (error "pprint-formula method for type ~A is not defined" (type-of formula)))
-(def-logic-print ('formula stream formula)
+(def-claudia-print ('formula stream formula)
   (pprint-formula formula stream))
 
 (defclass ∧ (formula)

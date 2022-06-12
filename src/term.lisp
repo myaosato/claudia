@@ -1,9 +1,9 @@
-(defpackage :logic/term
+(defpackage :claudia/term
   (:use :cl
-        :logic/pprint)
+        :claudia/pprint)
   (:export :term :var :const
            :func :def-func))
-(in-package :logic/term)
+(in-package :claudia/term)
 
 ;; ****************************************************************
 ;; meta data type
@@ -24,9 +24,8 @@
 (defmethod pprint-term ((term term) stream)
   (declare (ignore stream))
   (error "pprint-term method for type ~A is not defined" (type-of term)))
-(def-logic-print ('term stream term)
-  (let ((*print-pprint-dispatch* print-logic-print-dispatch))
-    (pprint-term term stream)))
+(def-claudia-print ('term stream term)
+  (pprint-term term stream))
 
 (defclass var (term)
   ((name :initarg :name :reader name)))

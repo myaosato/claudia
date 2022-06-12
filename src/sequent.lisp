@@ -1,7 +1,7 @@
-(defpackage :logic/sequent
+(defpackage :claudia/sequent
   (:use :cl
-        :logic/pprint)
-  (:import-from :logic/formula)
+        :claudia/pprint)
+  (:import-from :claudia/formula)
   (:export :make-sequent
            :l
            :r
@@ -14,7 +14,7 @@
            :format-seq
            :print-seq
            :with-splited-sequent))
-(in-package :logic/sequent)
+(in-package :claudia/sequent)
 
 ;; ****************************************************************
 ;; sequent
@@ -48,7 +48,7 @@
   (null (r seq)))
 
 (defun format-seq (seq n)
-  (let ((*print-pprint-dispatch* print-logic-print-dispatch))
+  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
     (format nil "H~A: ~{~:W~^, ~}~%C~A: ~{~:W~^, ~}~%"
             n (l seq)
             n (r seq))))

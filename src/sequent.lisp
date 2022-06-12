@@ -3,14 +3,11 @@
         :claudia/pprint)
   (:import-from :claudia/formula)
   (:export :make-sequent
-           :l
-           :r
-           :length-l
-           :length-r
-           :nth-l
-           :nth-r
-           :empty-l
-           :empty-r
+           :l :r
+           :length-l :length-r
+           :nth-l :nth-r
+           :empty-l :empty-r
+           :rest-l :rest-r
            :print-seq
            :with-splited-sequent))
 (in-package :claudia/sequent)
@@ -45,6 +42,12 @@
 
 (defun empty-r (seq)
   (null (r seq)))
+
+(defun rest-l (seq)
+  (rest (l seq)))
+
+(defun rest-r (seq)
+  (rest (r seq)))
 
 (defun print-seq (seq stream)
   (let ((*print-pprint-dispatch* print-claudia-print-dispatch))

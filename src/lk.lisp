@@ -61,8 +61,7 @@
 
 (defun and-r (seq n m)
   (let ((focus (nth-r 0 seq)))
-    ;; TODO (rest (r seq)) => (rest-r seq)
-    (with-splited-sequent (cons (l seq) (rest (r seq))) (n (1- m) g s d p)
+    (with-splited-sequent (cons (l seq) (rest-r seq)) (n (1- m) g s d p)
       (if (typep focus '∧)
           (make-goal (make-sequent g (cons (∧-1 focus) d))
                      (make-sequent s (cons (∧-2 focus) p)))
@@ -87,8 +86,7 @@
 
 (defun or-l (seq n m)
   (let ((focus (nth-l 0 seq)))
-    ;; TODO (rest (l seq)) => (rest-l seq)
-    (with-splited-sequent (cons (rest (l seq)) (r seq)) ((1- n) m g s d p)
+    (with-splited-sequent (cons (rest-l seq) (r seq)) ((1- n) m g s d p)
       (if (typep focus '∨)
           (make-goal (make-sequent (cons (∨-1 focus) g) d)
                      (make-sequent (cons (∨-2 focus) s) p))
@@ -125,8 +123,7 @@
 
 (defun to-l (seq n m)
   (let ((focus (nth-l 0 seq)))
-    ;; TODO (rest (l seq)) => (rest-l seq)
-    (with-splited-sequent (cons (rest (l seq)) (r seq)) ((1- n) m g s d p)
+    (with-splited-sequent (cons (rest-l seq) (r seq)) ((1- n) m g s d p)
       (if (typep focus '→)
           (make-goal (make-sequent g (cons (→-1 focus) d))
                      (make-sequent (cons (→-2 focus) s) p))

@@ -4,7 +4,7 @@
         :claudia/pprint)
   (:shadowing-import-from :claudia/term
                           :substitute)
-  (:export :formula :formula-list
+  (:export :formula :formula-list :is-free-at :is-not-free-at
            :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
            :¬ :¬-1
@@ -27,6 +27,10 @@
 ;; ****************************************************************
 (defclass formula nil
   ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
+(defun is-free-at (var formula)
+  (find var (free-vars formula) :test #'eq))
+(defun is-not-free-at (var formula)
+  (not (is-free-at var formula)))
 (defmethod print-object ((formula formula) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of formula)))
@@ -131,7 +135,7 @@
   (or (not (eq (∀-var place) var))
       (not (find var (free-vars (∀-formula place)) :test #'eq))
       (and (substitutable (∀-formula place) var term)
-           (not (find (∀-var place) (free-vars term)):test #'eq))))
+           (not (find (∀-var place) (free-vars term) :test #'eq)))))
 
 ;; ∃
 (defclass ∃ (formula)
@@ -152,7 +156,7 @@
   (or (not (eq (∃-var place) var))
       (not (find var (free-vars (∃-formula place)) :test #'eq))
       (and (substitutable (∃-formula place) var term)
-           (not (find (∃-var place) (free-vars term)):test #'eq))))
+           (not (find (∃-var place) (free-vars term) :test #'eq)))))
 
 ;;;; atomic
 (defclass atomic (formula) nil)

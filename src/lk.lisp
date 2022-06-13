@@ -126,7 +126,7 @@
     (if (typep focus '→)
         (list (sequent (cons (→-1 focus) (l seq))
                        (cons (→-2 focus) (cdr (r seq)))))
-      (error ""))))
+        (error ""))))
 
 (defun to-l (seq n m)
   (let ((focus (nth-l 0 seq)))
@@ -135,6 +135,43 @@
           (list (sequent g (cons (→-1 focus) d))
                 (sequent (cons (→-2 focus) s) p))
           (error "")))))
+
+;; For all
+;; A[t/x],Γ ⊢ Δ      Γ ⊢ A,Δ
+;; ------------(∀L)  ---------(∀R)  
+;; ∀xA,Γ ⊢ Δ         Γ ⊢ ∀xA,Δ
+(defun forall-l (seq term)
+  (let ((focus (nth-l 0 seq)))
+    (if (and (typep focus '∀) (substitutable focus (∀-var focus) term))
+        (list (sequent (cons (substitute focus (∀-var focus) term) (rest-l seq)) (r seq)))
+        (error ""))))
+
+(defun forall-r (seq term)
+  (let ((focus (nth-r 0 seq)))
+    (if (and (typep focus '∀)
+             (reduce (lambda (x f) (and x (is-not-free-at (∀-var focus) f))) (rest-r seq))
+             (reduce (lambda (x f) (and x (is-not-free-at (∀-var focus) f))) (l seq)))
+        (list (sequent (l seq) (cons (substitute focus (∀-var focus) term) (rest-r seq))))
+        (error ""))))
+
+;; Exist
+;; A,Γ ⊢ Δ        Γ ⊢ A[t/x],Δ
+;; ---------(∃L)  ------------(∃R)  
+;; ∃xA,Γ ⊢ Δ      Γ ⊢ ∃xA,Δ
+(defun exists-l (seq term)
+  (let ((focus (nth-l 0 seq)))
+    (if (and (typep focus '∃)
+             (reduce (lambda (x f) (and x (is-not-free-at (∃-var focus) f))) (rest-l seq))
+             (reduce (lambda (x f) (and x (is-not-free-at (∃-var focus) f))) (r seq)))
+        (list (sequent (cons (substitute focus (∀-var focus) term) (rest-l seq)) (r seq)))
+        (error ""))))
+
+(defun exists-r (seq term)
+  (let ((focus (nth-r 0 seq)))
+    (if (and (typep focus '∃) (substitutable focus (∃-var focus) term))
+        (list (sequent (l seq) (cons (substitute focus (∃-var focus) term) (rest-r seq))))
+        (error ""))))
+
 
 ;; Weakening
 ;; Γ ⊢ Δ         Γ ⊢ Δ

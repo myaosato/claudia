@@ -13,7 +13,7 @@
 ;;   - structure of theorem
 ;;   - separate definition(structure) and printer
 ;; ****************************************************************
-(defmacro def-theorem (name antecedent succedent &body proof)
+(defmacro def-theorem (name theorem &body proof)
   (let ((current-goal (gensym "GOAL-"))
         (step (gensym "STEP-"))
         (n (gensym "N-"))
@@ -22,7 +22,7 @@
         (steps (mapcar (lambda (x) `(list ,(nth 0 x) ',(nth 1 x) ,@(nthcdr 2 x)))
                        proof)))
     `(defun ,name ()
-       (let ((,current-goal (goal (sequent ,antecedent ,succedent))))
+       (let ((,current-goal (goal (sequent nil (list ,theorem)))))
          (format t "~16,,,'-A [GOAL]~%" "")
          (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
            (format t "~W~%" ,current-goal))

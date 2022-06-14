@@ -72,7 +72,7 @@
 
 (defun and-r (seq n m)
   (let ((focus (nth-r 0 seq)))
-    (with-splited-sequent (cons (l seq) (rest-r seq)) (n (1- m) g s d p)
+    (with-splited-sequent (sequent (l seq) (rest-r seq)) (n (1- m) g s d p)
       (if (typep focus '∧)
           (list (sequent g (cons (∧-1 focus) d))
                 (sequent s (cons (∧-2 focus) p)))
@@ -97,7 +97,7 @@
 
 (defun or-l (seq n m)
   (let ((focus (nth-l 0 seq)))
-    (with-splited-sequent (cons (rest-l seq) (r seq)) ((1- n) m g s d p)
+    (with-splited-sequent (sequent (rest-l seq) (r seq)) ((1- n) m g s d p)
       (if (typep focus '∨)
           (list (sequent (cons (∨-1 focus) g) d)
                 (sequent (cons (∨-2 focus) s) p))
@@ -110,7 +110,7 @@
 (defun not-l (seq)
   (let ((focus (nth-l 0 seq)))
     (if (typep focus '¬)
-        (list (sequent (cdr (l seq))
+        (list (sequent (rest-l seq)
                        (cons (¬-1 focus) (r seq))))
         (error ""))))
 
@@ -118,7 +118,7 @@
   (let ((focus (nth-r 0 seq)))
     (if (typep focus '¬)
         (list (sequent (cons (¬-1 focus) (l seq))
-                       (cdr (r seq))))
+                       (rest-r seq)))
         (error ""))))
 
 ;; To
@@ -134,7 +134,7 @@
 
 (defun to-l (seq n m)
   (let ((focus (nth-l 0 seq)))
-    (with-splited-sequent (cons (rest-l seq) (r seq)) ((1- n) m g s d p)
+    (with-splited-sequent (sequent (rest-l seq) (r seq)) ((1- n) m g s d p)
       (if (typep focus '→)
           (list (sequent g (cons (→-1 focus) d))
                 (sequent (cons (→-2 focus) s) p))

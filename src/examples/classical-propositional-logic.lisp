@@ -14,7 +14,7 @@
 ;; ⊢ A∨¬A
 ;; ****************************************************************
 (let ((a (prop "A")))
-  (def-theorem law-of-exclded-middle nil (list (∨ a (¬ a)))
+  (def-theorem law-of-exclded-middle (∨ a (¬ a))
     (0 cr)
     (0 or-r1)
     (0 pr 0 1)
@@ -28,7 +28,8 @@
 ;; ****************************************************************
 (let ((a (prop "A"))
       (b (prop "B")))
-  (def-theorem material-implication-1 (list (→ A B)) (list (∨ (¬ a) b))
+  (def-theorem material-implication-1 (→ (→ A B) (∨ (¬ a) b))
+    (0 to-r)
     (0 cr)
     (0 or-r1)
     (0 pr 0 1)
@@ -46,7 +47,7 @@
 ;; ****************************************************************
 (let ((a (prop "A"))
       (b (prop "B")))
-  (def-theorem material-implication-2 nil (list (→ (∨ (¬ a) b) (→ A B)))
+  (def-theorem material-implication-2 (→ (∨ (¬ a) b) (→ A B))
     (0 to-r)
     (0 to-r)
     (0 pl 0 1)
@@ -61,7 +62,7 @@
 ;; ****************************************************************
 (let ((a (prop "A"))
       (b (prop "B")))
-  (def-theorem |Perice's law| nil (list (→ (→ (→ a b) a) a))
+  (def-theorem |Perice's law| (→ (→ (→ a b) a) a)
     (0 to-r)
     (0 cr)
     (0 to-l 1 1)

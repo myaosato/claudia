@@ -10,9 +10,9 @@
 
 (def-predicate p 1)
 
-(let* ((x (var "x"))
-       (a (const "a")))
-  (def-theorem specialization nil (list (→ (∀ x (p x)) (∃ x (p x))))
+(let ((x (var "x"))
+      (a (const "a")))
+  (def-theorem specialization (→ (∀ x (p x)) (∃ x (p x)))
     (0 to-r)
     (0 forall-l a)
     (0 exists-r a)

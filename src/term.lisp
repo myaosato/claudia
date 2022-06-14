@@ -2,9 +2,8 @@
   (:use :cl
         :claudia/pprint)
   (:shadow :substitute)
-  (:export :term :free-vars :var :const :constructor
-           :func :def-func
-           :substitute :substitutable))
+  (:export :term :free-vars :var :const :constructor :term-=
+           :func :def-func))
 (in-package :claudia/term)
 
 ;; ****************************************************************
@@ -32,6 +31,8 @@
   (error "substitute method for type ~A is not defined" (type-of place)))
 (defmethod substitutable ((place term) var term)
   (error "substitutable method for type ~A is not defined" (type-of place)))
+(defmethod term-= ((a term) (b term))
+  (error "term-= method for type ~A is not defined" (type-of a)))
 
 ;; var
 (defclass var (term)
@@ -47,9 +48,12 @@
   (if (eq place var)
       term
       place))
-
 (defmethod substitutable ((place term) (var var) (term term))
   t)
+(defmethod term-= ((a var) (b term))
+  (and (typep b 'var)
+       ;; TODO
+       (eq a b)))
 
 ;; const-val
 (defclass const-val (term)
@@ -61,6 +65,10 @@
   (format stream "~A" (name term)))
 (defmethod substitute ((place const-val) (var var) (term term))
   place)
+(defmethod term-= ((a const-val) (b term))
+  (and (typep b 'const-val)
+       ;; TODO
+       (eq a b)))
 
 ;; func
 (defclass func (term)
@@ -87,6 +95,11 @@
 (defmethod substitute ((place func) (var var) (term term))
   (apply (constructor place)
          (mapcar (lambda (x) (substitute x var term)) (coerce (terms place) 'list))))
+(defmethod term-= ((a func) (b term))
+  (and (typep b 'func)
+       (eq (constructor a) (constructor b))
+       (reduce (lambda (acc z) (and acc z))
+               (map 'list (lambda (aa bb) (term-= aa bb)) (terms a) (terms b)))))
 
 ;; const (meta type)
 (defun func-const*-p (thing)

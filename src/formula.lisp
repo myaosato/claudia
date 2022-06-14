@@ -3,8 +3,9 @@
         :claudia/term
         :claudia/pprint)
   (:shadowing-import-from :claudia/term
-                          :substitute)
-  (:export :formula :formula-list :is-free-at :is-not-free-at
+                          :substitute
+                          :substitutable)
+  (:export :formula :formula-list :is-free-at :is-not-free-at :formula-=
            :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
            :¬ :¬-1
@@ -12,8 +13,7 @@
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
            :prop
-           :predicate :def-predicate :constructor
-           :substitute :substitutable))
+           :predicate :def-predicate :constructor))
 (in-package :claudia/formula)
 
 ;; ****************************************************************
@@ -52,6 +52,8 @@
   (error "substitute method for type ~A is not defined" (type-of place)))
 (defmethod substitutable ((place formula) var term)
   (error "substitutable method for type ~A is not defined" (type-of place)))
+(defmethod formula-= ((a formula) (b formula))
+  (error "formula-= method for type ~A is not defined" (type-of a)))
 
 ;; ∧
 (defclass ∧ (formula)
@@ -68,6 +70,10 @@
   (∧ (substitute (∧-1 place) var term) (substitute (∧-2 place) var term)))
 (defmethod substitutable ((place ∧) (var var) (term term))
   (and (substitutable (∧-1 place) var term) (substitutable (∧-2 place) var term)))
+(defmethod formula-= ((a ∧) (b formula))
+  (and (typep b '∧)
+       (formula-= (∧-1 a) (∧-1 b))
+       (formula-= (∧-2 a) (∧-2 b))))
 
 ;; ∨
 (defclass ∨ (formula)
@@ -84,6 +90,10 @@
   (∨ (substitute (∨-1 place) var term) (substitute (∨-2 place) var term)))
 (defmethod substitutable ((place ∨) (var var) (term term))
   (and (substitutable (∨-1 place) var term) (substitutable (∨-2 place) var term)))
+(defmethod formula-= ((a ∨) (b formula))
+  (and (typep b '∨)
+       (formula-= (∨-1 a) (∨-1 b))
+       (formula-= (∨-2 a) (∨-2 b))))
 
 ;; ¬
 (defclass ¬ (formula)
@@ -99,6 +109,9 @@
   (¬ (substitute (¬-1 place) var term)))
 (defmethod substitutable ((place ¬) (var var) (term term))
   (substitutable (¬-1 place) var term))
+(defmethod formula-= ((a ¬) (b formula))
+  (and (typep b '¬)
+       (formula-= (¬-1 a) (¬-1 b))))
 
 ;; →
 (defclass → (formula)
@@ -115,6 +128,10 @@
   (→ (substitute (→-1 place) var term) (substitute (→-2 place) var term)))
 (defmethod substitutable ((place →) (var var) (term term))
   (and (substitutable (→-1 place) var term) (substitutable (→-2 place) var term)))
+(defmethod formula-= ((a →) (b formula))
+  (and (typep b '→)
+       (formula-= (→-1 a) (→-1 b))
+       (formula-= (→-2 a) (→-2 b))))
 
 ;; ∀
 (defclass ∀ (formula)
@@ -136,13 +153,17 @@
       (not (find var (free-vars (∀-formula place)) :test #'eq))
       (and (substitutable (∀-formula place) var term)
            (not (find (∀-var place) (free-vars term) :test #'eq)))))
+(defmethod formula-= ((a ∀) (b formula))
+  (and (typep b '∀)
+       (term-= (∀-var a) (∀-var b))
+       (formula-= (∀-formula a) (∀-formula b))))
 
 ;; ∃
 (defclass ∃ (formula)
   ((∃-var :initarg :var :reader ∃-var :type var)
    (∃-formula :initarg :formula :reader ∃-formula :type formula)))
 (defun ∃ (var formula)
-  (make-instance '∃ :var var :fomula formula))
+  (make-instance '∃ :var var :formula formula))
 (def-print-formula (formula ∃) "(~A ~A ~A)" '∃ (∃-var formula) (∃-formula formula))
 (defmethod pprint-formula ((formula ∃) stream)
   (format stream "∃~W(~W)" (∃-var formula) (∃-formula formula)))
@@ -157,6 +178,10 @@
       (not (find var (free-vars (∃-formula place)) :test #'eq))
       (and (substitutable (∃-formula place) var term)
            (not (find (∃-var place) (free-vars term) :test #'eq)))))
+(defmethod formula-= ((a ∃) (b formula))
+  (and (typep b '∃)
+       (term-= (∃-var a) (∃-var b))
+       (formula-= (∃-formula a) (∃-formula b))))
 
 ;;;; atomic
 (defclass atomic (formula) nil)
@@ -173,6 +198,10 @@
   (format stream "~A" (name formula)))
 (defmethod substitute ((place prop) (var var) (term term))
   place)
+(defmethod formula-= ((a prop) (b formula))
+  (and (typep b 'prop)
+       ;; TODO
+       (eq a b)))
 
 ;; predicate
 (defclass predicate (atomic)
@@ -196,3 +225,9 @@
 (defmethod substitute ((place predicate) (var var) (term term))
   (apply (constructor place)
          (mapcar (lambda (x) (substitute x var term)) (coerce (terms place) 'list))))
+(defmethod formula-= ((a predicate) (b formula))
+  (and (typep b 'predicate)
+       ;; TODO
+       (eq (constructor a) (constructor b))
+       (reduce (lambda (acc z) (and acc z))
+               (map 'list (lambda (aa bb) (term-= aa bb)) (terms a) (terms b)))))

@@ -3,7 +3,8 @@
         :claudia/formula
         :claudia/sequent)
   (:shadowing-import-from :claudia/formula
-                          :substitute)
+                          :substitute
+                          :substitutable)
   (:export :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
            :¬ :¬-1
@@ -15,6 +16,8 @@
            :or-l :or-r1 :or-r2
            :not-l :not-r
            :to-l :to-r
+           :forall-l :forall-r
+           :exists-l :exists-r
            :wl :wr
            :cl :cr
            :pl :pr))
@@ -37,7 +40,7 @@
 (defun id (seq)
   (if (and (= (length-l seq) 1)
            (= (length-r seq) 1)
-           (equal (nth-l 0 seq) (nth-r 0 seq)))
+           (formula-= (nth-l 0 seq) (nth-r 0 seq)))
       nil
       (error "")))
 
@@ -144,7 +147,7 @@
 (defun forall-l (seq term)
   (let ((focus (nth-l 0 seq)))
     (if (and (typep focus '∀) (substitutable focus (∀-var focus) term))
-        (list (sequent (cons (substitute focus (∀-var focus) term) (rest-l seq)) (r seq)))
+        (list (sequent (cons (substitute (∀-formula focus) (∀-var focus) term) (rest-l seq)) (r seq)))
         (error ""))))
 
 (defun forall-r (seq term)
@@ -152,7 +155,7 @@
     (if (and (typep focus '∀)
              (reduce (lambda (x f) (and x (is-not-free-at (∀-var focus) f))) (rest-r seq))
              (reduce (lambda (x f) (and x (is-not-free-at (∀-var focus) f))) (l seq)))
-        (list (sequent (l seq) (cons (substitute focus (∀-var focus) term) (rest-r seq))))
+        (list (sequent (l seq) (cons (substitute (∀-formula focus) (∀-var focus) term) (rest-r seq))))
         (error ""))))
 
 ;; Exist
@@ -164,13 +167,13 @@
     (if (and (typep focus '∃)
              (reduce (lambda (x f) (and x (is-not-free-at (∃-var focus) f))) (rest-l seq))
              (reduce (lambda (x f) (and x (is-not-free-at (∃-var focus) f))) (r seq)))
-        (list (sequent (cons (substitute focus (∀-var focus) term) (rest-l seq)) (r seq)))
+        (list (sequent (cons (substitute (∃-formula focus) (∃-var focus) term) (rest-l seq)) (r seq)))
         (error ""))))
 
 (defun exists-r (seq term)
   (let ((focus (nth-r 0 seq)))
     (if (and (typep focus '∃) (substitutable focus (∃-var focus) term))
-        (list (sequent (l seq) (cons (substitute focus (∃-var focus) term) (rest-r seq))))
+        (list (sequent (l seq) (cons (substitute (∃-formula focus) (∃-var focus) term) (rest-r seq))))
         (error ""))))
 
 

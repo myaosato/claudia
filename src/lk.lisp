@@ -1,8 +1,7 @@
 (defpackage :claudia/lk
   (:use :cl
         :claudia/formula
-        :claudia/sequent
-        :claudia/axiom)
+        :claudia/sequent)
   (:shadowing-import-from :claudia/formula
                           :substitute)
   (:export :∧ :∧-1 :∧-2
@@ -35,10 +34,12 @@
 ;; axiom of LK
 ;; ------
 ;; A  ⊢ A
-(def-axiom id (seq)
-  (and (= (length-l seq) 1)
-       (= (length-r seq) 1)
-       (equal (nth-l 0 seq) (nth-r 0 seq))))
+(defun id (seq)
+  (if (and (= (length-l seq) 1)
+           (= (length-r seq) 1)
+           (equal (nth-l 0 seq) (nth-r 0 seq)))
+      nil
+      (error "")))
 
 ;; Cut
 ;; Γ ⊢ A,Δ  A,Σ ⊢ Π

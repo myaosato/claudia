@@ -36,12 +36,12 @@
 
 ;; axiom of LK
 ;; ------
-;; A  ⊢ A
+;; Γ,A,Δ  ⊢ Σ,A,Π
 (defun id (seq)
-  (if (and (= (length-l seq) 1)
-           (= (length-r seq) 1)
-           (formula-= (nth-l 0 seq) (nth-r 0 seq)))
-      nil
+  (if (and (> (length-l seq) 0)
+           (> (length-r seq) 0)
+           (some (lambda (lf) (some (lambda (rf) (formula-= lf rf)) (r seq))) (l seq)))
+      nil ;; proved
       (error "")))
 
 ;; Cut

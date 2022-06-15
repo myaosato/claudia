@@ -5,7 +5,7 @@
   (:shadowing-import-from :claudia/term
                           :substitute
                           :substitutable)
-  (:export :formula :formula-list :is-free-at :is-not-free-at :formula-=
+  (:export :formula :formula-list :free-p :formula-=
            :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
            :¬ :¬-1
@@ -27,10 +27,6 @@
 ;; ****************************************************************
 (defclass formula nil
   ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
-(defun is-free-at (var formula)
-  (find var (free-vars formula) :test #'eq))
-(defun is-not-free-at (var formula)
-  (not (is-free-at var formula)))
 (defmethod print-object ((formula formula) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of formula)))
@@ -50,6 +46,12 @@
   (error "substitutable method for type ~A is not defined" (type-of place)))
 (defmethod formula-= ((a formula) (b formula))
   (error "formula-= method for type ~A is not defined" (type-of a)))
+
+(defun free-p (var &optional x)
+  (if (or (typep x 'formula)
+          (typep x 'term))
+      (find var (free-vars x) :test #'eq)
+      (lambda (f) (free-p var f))))
 
 ;; ∧
 (defclass ∧ (formula)
@@ -150,10 +152,10 @@
       place
       (∀ (∀-var place) (substitute (∀-formula place) var term))))
 (defmethod substitutable ((place ∀) (var var) (term term))
-  (or (not (eq (∀-var place) var))
-      (not (find var (free-vars (∀-formula place)) :test #'eq))
+  (or (not (term-= (∀-var place) var))
+      (not (free-p var (∀-formula place)))
       (and (substitutable (∀-formula place) var term)
-           (not (find (∀-var place) (free-vars term) :test #'eq)))))
+           (not (free-p (∀-var place) term)))))
 (defmethod formula-= ((a ∀) (b formula))
   (and (typep b '∀)
        (term-= (∀-var a) (∀-var b))
@@ -176,10 +178,10 @@
       place
       (∃ (∃-var place) (substitute (∃-formula place) var term))))
 (defmethod substitutable ((place ∃) (var var) (term term))
-  (or (not (eq (∃-var place) var))
-      (not (find var (free-vars (∃-formula place)) :test #'eq))
+  (or (not (term-= (∃-var place) var))
+      (not (free-p var (∃-formula place)))
       (and (substitutable (∃-formula place) var term)
-           (not (find (∃-var place) (free-vars term) :test #'eq)))))
+           (not (free-p (∃-var place) term)))))
 (defmethod formula-= ((a ∃) (b formula))
   (and (typep b '∃)
        (term-= (∃-var a) (∃-var b))
@@ -203,7 +205,6 @@
   place)
 (defmethod formula-= ((a prop) (b formula))
   (and (typep b 'prop)
-       ;; TODO
        (eq a b)))
 
 ;; predicate

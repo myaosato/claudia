@@ -45,63 +45,58 @@
       (error "")))
 
 ;; Cut
-;; Γ ⊢ A,Δ  A,Σ ⊢ Π
+;; Γ ⊢ A,Δ  A,Γ ⊢ Δ
 ;; -----------------
-;; Γ,Σ ⊢ Δ,Π
-(defun cut (seq a n m)
-  (with-splited-sequent seq (n m g s d p)
-    (list (sequent g (cons a d))
-          (sequent (cons a s) p))))
+;; Γ ⊢ Δ
+(defun cut (seq formula)
+  (list (sequent (l seq) (cons formula (r seq)))
+        (sequent (cons formula (l seq)) (r seq))))
 
 ;; And
-;; A,Γ ⊢ Δ          B,Γ ⊢ Δ          Γ ⊢ A,Δ  Σ ⊢ B,Π
+;; A,Γ ⊢ Δ          B,Γ ⊢ Δ          Γ ⊢ A,Δ  Γ ⊢ B,Δ
 ;; ---------(∧L1)   ---------(∧L2)   ----------------(∧R)
-;; A∧B,Γ ⊢ Δ        A∧B,Γ ⊢ Δ        Γ,Σ ⊢ A∧B,Δ,Π 
-(defun and-l (seq op)
+;; A∧B,Γ ⊢ Δ        A∧B,Γ ⊢ Δ        Γ ⊢ A∧B,Δ 
+(defun and-l1 (seq)
   (let ((focus (nth-l 0 seq)))
     (if (typep focus '∧)
-        (list (sequent (cons (funcall op focus) (cdr (l seq)))
-                       (r seq)))
+        (list (sequent (cons (∧-1 focus) (rest-l seq)) (r seq)))
         (error ""))))
-
-(defun and-l1 (seq)
-  (and-l seq #'∧-1))
 
 (defun and-l2 (seq)
-  (and-l seq #'∧-2))
-
-(defun and-r (seq n m)
-  (let ((focus (nth-r 0 seq)))
-    (with-splited-sequent (sequent (l seq) (rest-r seq)) (n (1- m) g s d p)
-      (if (typep focus '∧)
-          (list (sequent g (cons (∧-1 focus) d))
-                (sequent s (cons (∧-2 focus) p)))
-          (error "")))))
-
-;; Or
-;; Γ ⊢ A,Δ          Γ ⊢ B,Δ          A,Γ ⊢ Δ  B,Σ ⊢ Π
-;; ---------(∨R1)   ---------(∨R2)   ----------------(∨L)
-;; Γ ⊢ A∨B,Δ        Γ ⊢ A∨B,Δ        A∨B,Γ,Σ ⊢ Δ,Π 
-(defun or-r (seq op)
-  (let ((focus (nth-r 0 seq)))
-    (if (typep focus '∨)
-        (list (sequent (l seq)
-                       (cons (funcall op focus) (cdr (r seq)))))
+  (let ((focus (nth-l 0 seq)))
+    (if (typep focus '∧)
+        (list (sequent (cons (∧-2 focus) (rest-l seq)) (r seq)))
         (error ""))))
 
+(defun and-r (seq)
+  (let ((focus (nth-r 0 seq)))
+    (if (typep focus '∧)
+        (list (sequent (l seq) (cons (∧-1 focus) (rest-r seq)))
+              (sequent (l seq) (cons (∧-2 focus) (rest-r seq))))
+        (error ""))))
+
+;; Or
+;; Γ ⊢ A,Δ          Γ ⊢ B,Δ          A,Γ ⊢ Δ  B,Γ ⊢ Δ
+;; ---------(∨R1)   ---------(∨R2)   ----------------(∨L)
+;; Γ ⊢ A∨B,Δ        Γ ⊢ A∨B,Δ        A∨B,Γ ⊢ Δ 
 (defun or-r1 (seq)
-  (or-r seq #'∨-1))
+  (let ((focus (nth-r 0 seq)))
+    (if (typep focus '∨)
+        (list (sequent (l seq) (cons (∨-1 focus) (rest-r seq))))
+        (error ""))))
 
 (defun or-r2 (seq)
-  (or-r seq #'∨-2))
+  (let ((focus (nth-r 0 seq)))
+    (if (typep focus '∨)
+        (list (sequent (l seq) (cons (∨-2 focus) (rest-r seq))))
+        (error ""))))
 
-(defun or-l (seq n m)
+(defun or-l (seq)
   (let ((focus (nth-l 0 seq)))
-    (with-splited-sequent (sequent (rest-l seq) (r seq)) ((1- n) m g s d p)
-      (if (typep focus '∨)
-          (list (sequent (cons (∨-1 focus) g) d)
-                (sequent (cons (∨-2 focus) s) p))
-          (error "")))))
+    (if (typep focus '∨)
+        (list (sequent (cons (∨-1 focus) (rest-l seq)) (r seq))
+              (sequent (cons (∨-2 focus) (rest-l seq)) (r seq)))
+        (error ""))))
 
 ;; Not
 ;; Γ ⊢ A,Δ       A,Γ ⊢ Δ
@@ -110,35 +105,31 @@
 (defun not-l (seq)
   (let ((focus (nth-l 0 seq)))
     (if (typep focus '¬)
-        (list (sequent (rest-l seq)
-                       (cons (¬-1 focus) (r seq))))
+        (list (sequent (rest-l seq) (cons (¬-1 focus) (r seq))))
         (error ""))))
 
 (defun not-r (seq)
   (let ((focus (nth-r 0 seq)))
     (if (typep focus '¬)
-        (list (sequent (cons (¬-1 focus) (l seq))
-                       (rest-r seq)))
+        (list (sequent (cons (¬-1 focus) (l seq)) (rest-r seq)))
         (error ""))))
 
 ;; To
-;; A,Γ ⊢ B,Δ      Γ ⊢ A,Δ  B,Σ ⊢ Π
-;; ---------(¬R)  ----------------(¬L)  
-;; Γ ⊢ A→B,Δ      A→B,Γ,Σ ⊢ Δ,Π
+;; A,Γ ⊢ B,Δ      Γ ⊢ A,Δ  B,Γ ⊢ Δ
+;; ---------(¬R)  ----------------(¬L)
+;; Γ ⊢ A→B,Δ      A→B,Γ ⊢ Δ
 (defun to-r (seq)
   (let ((focus (nth-r 0 seq)))
     (if (typep focus '→)
-        (list (sequent (cons (→-1 focus) (l seq))
-                       (cons (→-2 focus) (cdr (r seq)))))
+        (list (sequent (cons (→-1 focus) (l seq)) (cons (→-2 focus) (rest-r seq))))
         (error ""))))
 
-(defun to-l (seq n m)
+(defun to-l (seq)
   (let ((focus (nth-l 0 seq)))
-    (with-splited-sequent (sequent (rest-l seq) (r seq)) ((1- n) m g s d p)
-      (if (typep focus '→)
-          (list (sequent g (cons (→-1 focus) d))
-                (sequent (cons (→-2 focus) s) p))
-          (error "")))))
+    (if (typep focus '→)
+        (list (sequent (rest-l seq) (cons (→-1 focus) (r seq)))
+              (sequent (cons (→-2 focus) (rest-l seq)) (r seq)))
+        (error ""))))
 
 ;; For all
 ;; A[t/x],Γ ⊢ Δ      Γ ⊢ A,Δ
@@ -146,33 +137,35 @@
 ;; ∀xA,Γ ⊢ Δ         Γ ⊢ ∀xA,Δ
 (defun forall-l (seq term)
   (let ((focus (nth-l 0 seq)))
-    (if (and (typep focus '∀) (substitutable focus (∀-var focus) term))
+    (if (and (typep focus '∀)
+             (substitutable focus (∀-var focus) term))
         (list (sequent (cons (substitute (∀-formula focus) (∀-var focus) term) (rest-l seq)) (r seq)))
         (error ""))))
 
-(defun forall-r (seq term)
+(defun forall-r (seq)
   (let ((focus (nth-r 0 seq)))
     (if (and (typep focus '∀)
-             (reduce (lambda (x f) (and x (is-not-free-at (∀-var focus) f))) (rest-r seq))
-             (reduce (lambda (x f) (and x (is-not-free-at (∀-var focus) f))) (l seq)))
-        (list (sequent (l seq) (cons (substitute (∀-formula focus) (∀-var focus) term) (rest-r seq))))
+             (notany (free-p (∀-var focus)) (l seq))
+             (notany (free-p (∀-var focus)) (rest-r seq)))
+        (list (sequent (l seq) (cons (∀-formula focus) (rest-r seq))))
         (error ""))))
 
 ;; Exist
 ;; A,Γ ⊢ Δ        Γ ⊢ A[t/x],Δ
 ;; ---------(∃L)  ------------(∃R)  
 ;; ∃xA,Γ ⊢ Δ      Γ ⊢ ∃xA,Δ
-(defun exists-l (seq term)
+(defun exists-l (seq)
   (let ((focus (nth-l 0 seq)))
     (if (and (typep focus '∃)
-             (reduce (lambda (x f) (and x (is-not-free-at (∃-var focus) f))) (rest-l seq))
-             (reduce (lambda (x f) (and x (is-not-free-at (∃-var focus) f))) (r seq)))
-        (list (sequent (cons (substitute (∃-formula focus) (∃-var focus) term) (rest-l seq)) (r seq)))
+             (notany (free-p (∃-var focus)) (rest-l seq))
+             (notany (free-p (∃-var focus)) (r seq)))
+        (list (sequent (cons (∃-formula focus) (rest-l seq)) (r seq)))
         (error ""))))
 
 (defun exists-r (seq term)
   (let ((focus (nth-r 0 seq)))
-    (if (and (typep focus '∃) (substitutable focus (∃-var focus) term))
+    (if (and (typep focus '∃)
+             (substitutable focus (∃-var focus) term))
         (list (sequent (l seq) (cons (substitute (∃-formula focus) (∃-var focus) term) (rest-r seq))))
         (error ""))))
 
@@ -181,14 +174,14 @@
 ;; Γ ⊢ Δ         Γ ⊢ Δ
 ;; -------(WL)  ---------(WR)
 ;; A,Γ ⊢ Δ       Γ ⊢ A,Δ
-(defun wl (seq)
-  (if (>= (length-l seq) 1)
-      (list (sequent (cdr (l seq)) (r seq)))
+(defun wl (seq &optional (n 0))
+  (if (> (length-l seq) n)
+      (list (remove-nth-l n seq))
       (error "")))
 
-(defun wr (seq)
+(defun wr (seq &optional (n 0))
   (if (>= (length-r seq) 1)
-      (list (sequent (l seq) (cdr (r seq))))
+      (list (remove-nth-r n seq))
       (error "")))
 
 ;; Contraction

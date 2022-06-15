@@ -9,6 +9,7 @@
            :nth-l :nth-r
            :empty-l :empty-r
            :rest-l :rest-r
+           :remove-nth-l :remove-nth-r
            :with-splited-sequent))
 (in-package :claudia/sequent)
 
@@ -45,6 +46,10 @@
   (rest (l seq)))
 (defun rest-r (seq)
   (rest (r seq)))
+(defun remove-nth-l (n seq)
+  (sequent (append (subseq (l seq) 0 n) (subseq (l seq) (1+ n))) (r seq)))
+(defun remove-nth-r (n seq)
+  (sequent (l seq) (append (subseq (r seq) 0 n) (subseq (r seq) (1+ n)))))
 
 (def-claudia-print (sequent) (seq stream)
   (format stream "~{~:W~^, ~}  ⊢  ~{~:W~^, ~}" (l seq) (r seq)))

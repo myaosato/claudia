@@ -18,10 +18,6 @@
 (defmethod print-object ((term term) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of term)))
-(defmacro def-print-term ((term class) control-string &rest format-arguments)
-  (let ((stream (gensym "STREAM")))
-    `(defmethod print-object ((,term ,class) ,stream)
-       (format ,stream ,control-string ,@format-arguments))))
 (defmethod pprint-term ((term term) stream)
   (declare (ignore stream))
   (error "pprint-term method for type ~A is not defined" (type-of term)))
@@ -41,7 +37,8 @@
   (setf (%free-vars term) (list term)))
 (defun var (name)
   (make-instance 'var :name name))
-(def-print-term (term var) "#<Var: ~A>" (name term))
+(defmethod print-object ((term var) stream)
+  (format stream "#<Var: ~A>" (name term)))
 (defmethod pprint-term ((term var) stream)
   (format stream "~A" (name term)))
 (defmethod substitute ((place var) (var var) (term term))
@@ -52,7 +49,6 @@
   t)
 (defmethod term-= ((a var) (b term))
   (and (typep b 'var)
-       ;; TODO
        (eq a b)))
 
 ;; const-val
@@ -60,14 +56,14 @@
   ((name :initarg :name :reader name)))
 (defun const (name)
   (make-instance 'const-val :name name))
-(def-print-term (term  const-val) "#<Const: ~A>" (name term))
+(defmethod print-object ((term  const-val) stream)
+    (format stream "#<Const: ~A>" (name term)))
 (defmethod pprint-term ((term const-val) stream)
   (format stream "~A" (name term)))
 (defmethod substitute ((place const-val) (var var) (term term))
   place)
 (defmethod term-= ((a const-val) (b term))
   (and (typep b 'const-val)
-       ;; TODO
        (eq a b)))
 
 ;; func
@@ -86,7 +82,8 @@
                              :constructor constructor))
             (c (&rest terms) (apply #'%c ',name #'c terms)))
      (defun ,name (&rest terms) (apply #'%c ',name #'c terms))))
-(def-print-term (term func) "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list))
+(defmethod print-object ((term func) stream)
+  (format stream "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list)))
 (defmethod pprint-term ((term func) stream)
   (if (= (length (terms term)) 2)
       (format stream "(~:W ~A ~:W)"

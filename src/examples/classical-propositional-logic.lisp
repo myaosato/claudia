@@ -17,9 +17,8 @@
   (def-theorem law-of-exclded-middle (∨ a (¬ a))
     (0 cr)
     (0 or-r1)
-    (0 pr 0 1)
-    (0 or-r2)
-    (0 not-r)
+    (0 or-r2 1)
+    (0 not-r 1)
     (0 id)))
 
 ;; ****************************************************************
@@ -31,10 +30,9 @@
   (def-theorem material-implication-1 (→ (→ A B) (∨ (¬ a) b))
     (0 to-r)
     (0 to-l)
-    (0 pr 0 1)
-    (0 or-r1)
+    (0 or-r1 1)
     (1 or-r2)
-    (0 not-r)
+    (0 not-r 1)
     (0 id)
     (0 id)))
 
@@ -47,9 +45,8 @@
   (def-theorem material-implication-2 (→ (∨ (¬ a) b) (→ A B))
     (0 to-r)
     (0 to-r)
-    (0 pl 0 1)
-    (0 or-l)
-    (0 not-l)
+    (0 or-l 1)
+    (0 not-l 1)
     (0 id)
     (0 id)))
 
@@ -64,5 +61,4 @@
     (0 to-l)
     (1 id)
     (0 to-r)
-    (0 wr 0)
     (0 id)))

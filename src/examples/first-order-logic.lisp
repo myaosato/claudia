@@ -1,5 +1,5 @@
 (defpackage :claudia/examples/first-order-logic
-  (:nicknames :claudia/example/fol)
+  (:nicknames :claudia/examples/fol)
   (:use :cl
         :claudia/theorem
         :claudia/term

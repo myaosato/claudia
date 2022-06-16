@@ -56,118 +56,118 @@
 ;; A,Γ ⊢ Δ          B,Γ ⊢ Δ          Γ ⊢ A,Δ  Γ ⊢ B,Δ
 ;; ---------(∧L1)   ---------(∧L2)   ----------------(∧R)
 ;; A∧B,Γ ⊢ Δ        A∧B,Γ ⊢ Δ        Γ ⊢ A∧B,Δ 
-(defun and-l1 (seq)
-  (let ((focus (nth-l 0 seq)))
+(defun and-l1 (seq &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (typep focus '∧)
-        (list (sequent (cons (∧-1 focus) (rest-l seq)) (r seq)))
-        (error ""))))
+        (list (sequent (replace-nth-l n (∧-1 focus) seq) (r seq)))
+        (error "AND-L1 (~A) is not applicable to ~A" n seq))))
 
-(defun and-l2 (seq)
-  (let ((focus (nth-l 0 seq)))
+(defun and-l2 (seq &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (typep focus '∧)
-        (list (sequent (cons (∧-2 focus) (rest-l seq)) (r seq)))
-        (error ""))))
+        (list (sequent (replace-nth-l n (∧-2 focus) seq) (r seq)))
+        (error "AND-L2 (~A) is not applicable to ~A" n seq))))
 
-(defun and-r (seq)
-  (let ((focus (nth-r 0 seq)))
+(defun and-r (seq &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (typep focus '∧)
-        (list (sequent (l seq) (cons (∧-1 focus) (rest-r seq)))
-              (sequent (l seq) (cons (∧-2 focus) (rest-r seq))))
-        (error ""))))
+        (list (sequent (l seq) (replace-nth-r n (∧-1 focus) seq))
+              (sequent (l seq) (replace-nth-r n (∧-2 focus) seq)))
+        (error "AND-R (~A) is not applicable to ~A" n seq))))
 
 ;; Or
 ;; Γ ⊢ A,Δ          Γ ⊢ B,Δ          A,Γ ⊢ Δ  B,Γ ⊢ Δ
 ;; ---------(∨R1)   ---------(∨R2)   ----------------(∨L)
 ;; Γ ⊢ A∨B,Δ        Γ ⊢ A∨B,Δ        A∨B,Γ ⊢ Δ 
-(defun or-r1 (seq)
-  (let ((focus (nth-r 0 seq)))
+(defun or-r1 (seq &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (typep focus '∨)
-        (list (sequent (l seq) (cons (∨-1 focus) (rest-r seq))))
-        (error ""))))
+        (list (sequent (l seq) (replace-nth-r n (∨-1 focus) seq)))
+        (error "OR-R1 (~A) is not applicable to ~A" n seq))))
 
-(defun or-r2 (seq)
-  (let ((focus (nth-r 0 seq)))
+(defun or-r2 (seq &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (typep focus '∨)
-        (list (sequent (l seq) (cons (∨-2 focus) (rest-r seq))))
-        (error ""))))
+        (list (sequent (l seq) (replace-nth-r n (∨-2 focus) seq)))
+        (error "OR-R2 (~A) is not applicable to ~A" n seq))))
 
-(defun or-l (seq)
-  (let ((focus (nth-l 0 seq)))
+(defun or-l (seq &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (typep focus '∨)
-        (list (sequent (cons (∨-1 focus) (rest-l seq)) (r seq))
-              (sequent (cons (∨-2 focus) (rest-l seq)) (r seq)))
-        (error ""))))
+        (list (sequent (replace-nth-l n (∨-1 focus) seq) (r seq))
+              (sequent (replace-nth-l n (∨-2 focus) seq) (r seq)))
+        (error "OR-L (~A) is not applicable to ~A" n seq))))
 
 ;; Not
 ;; Γ ⊢ A,Δ       A,Γ ⊢ Δ
 ;; --------(¬L)  ---------(¬R)
 ;; ¬A,Γ ⊢ Δ      Γ ⊢ ¬A,Δ
-(defun not-l (seq)
-  (let ((focus (nth-l 0 seq)))
+(defun not-l (seq &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (typep focus '¬)
-        (list (sequent (rest-l seq) (cons (¬-1 focus) (r seq))))
-        (error ""))))
+        (list (sequent (remove-nth-l n seq) (cons (¬-1 focus) (r seq))))
+        (error "NOT-L (~A) is not applicable to ~A" n seq))))
 
-(defun not-r (seq)
-  (let ((focus (nth-r 0 seq)))
+(defun not-r (seq &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (typep focus '¬)
-        (list (sequent (cons (¬-1 focus) (l seq)) (rest-r seq)))
-        (error ""))))
+        (list (sequent (cons (¬-1 focus) (l seq)) (remove-nth-r n seq)))
+        (error "NOT-R (~A) is not applicable to ~A" n seq))))
 
 ;; To
 ;; A,Γ ⊢ B,Δ      Γ ⊢ A,Δ  B,Γ ⊢ Δ
 ;; ---------(¬R)  ----------------(¬L)
 ;; Γ ⊢ A→B,Δ      A→B,Γ ⊢ Δ
-(defun to-r (seq)
-  (let ((focus (nth-r 0 seq)))
+(defun to-r (seq &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (typep focus '→)
-        (list (sequent (cons (→-1 focus) (l seq)) (cons (→-2 focus) (rest-r seq))))
-        (error ""))))
+        (list (sequent (cons (→-1 focus) (l seq)) (replace-nth-r n (→-2 focus) seq)))
+        (error "TO-R (~A) is not applicable to ~A" n seq))))
 
-(defun to-l (seq)
-  (let ((focus (nth-l 0 seq)))
+(defun to-l (seq &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (typep focus '→)
-        (list (sequent (rest-l seq) (cons (→-1 focus) (r seq)))
-              (sequent (cons (→-2 focus) (rest-l seq)) (r seq)))
-        (error ""))))
+        (list (sequent (remove-nth-r n seq) (cons (→-1 focus) (r seq)))
+              (sequent (replace-nth-r n (→-2 focus) seq) (r seq)))
+        (error "TO-L (~A) is not applicable to ~A" n seq))))
 
 ;; For all
 ;; A[t/x],Γ ⊢ Δ      Γ ⊢ A,Δ
 ;; ------------(∀L)  ---------(∀R)  
 ;; ∀xA,Γ ⊢ Δ         Γ ⊢ ∀xA,Δ
-(defun forall-l (seq term)
-  (let ((focus (nth-l 0 seq)))
+(defun forall-l (seq term &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (and (typep focus '∀)
              (substitutable focus (∀-var focus) term))
-        (list (sequent (cons (substitute (∀-formula focus) (∀-var focus) term) (rest-l seq)) (r seq)))
-        (error ""))))
+        (list (sequent (replace-nth-l n (substitute (∀-formula focus) (∀-var focus) term) seq) (r seq)))
+        (error "FORALL-L (~A) is not applicable to ~A" n seq))))
 
-(defun forall-r (seq)
-  (let ((focus (nth-r 0 seq)))
+(defun forall-r (seq &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (and (typep focus '∀)
              (notany (free-p (∀-var focus)) (l seq))
-             (notany (free-p (∀-var focus)) (rest-r seq)))
-        (list (sequent (l seq) (cons (∀-formula focus) (rest-r seq))))
-        (error ""))))
+             (notany (free-p (∀-var focus)) (remove-nth-r n seq)))
+        (list (sequent (l seq) (replace-nth-r n (∀-formula focus) seq)))
+        (error "FORALL-R (~A) is not applicable to ~A" n seq))))
 
 ;; Exist
 ;; A,Γ ⊢ Δ        Γ ⊢ A[t/x],Δ
 ;; ---------(∃L)  ------------(∃R)  
 ;; ∃xA,Γ ⊢ Δ      Γ ⊢ ∃xA,Δ
-(defun exists-l (seq)
-  (let ((focus (nth-l 0 seq)))
+(defun exists-l (seq &optional (n 0))
+  (let ((focus (nth-l n seq)))
     (if (and (typep focus '∃)
-             (notany (free-p (∃-var focus)) (rest-l seq))
+             (notany (free-p (∃-var focus)) (remove-nth-l n seq))
              (notany (free-p (∃-var focus)) (r seq)))
-        (list (sequent (cons (∃-formula focus) (rest-l seq)) (r seq)))
-        (error ""))))
+        (list (sequent (replace-nth-r n (∃-formula focus) seq) (r seq)))
+        (error "EXISTS-L (~A) is not applicable to ~A" n seq))))
 
-(defun exists-r (seq term)
-  (let ((focus (nth-r 0 seq)))
+(defun exists-r (seq term &optional (n 0))
+  (let ((focus (nth-r n seq)))
     (if (and (typep focus '∃)
              (substitutable focus (∃-var focus) term))
-        (list (sequent (l seq) (cons (substitute (∃-formula focus) (∃-var focus) term) (rest-r seq))))
-        (error ""))))
+        (list (sequent (l seq) (replace-nth-r n (substitute (∃-formula focus) (∃-var focus) term) seq)))
+        (error "EXISTS-R (~A) is not applicable to ~A" n seq))))
 
 
 ;; Weakening
@@ -176,27 +176,27 @@
 ;; A,Γ ⊢ Δ       Γ ⊢ A,Δ
 (defun wl (seq &optional (n 0))
   (if (> (length-l seq) n)
-      (list (remove-nth-l n seq))
-      (error "")))
+      (list (sequent (remove-nth-l n seq) (r seq)))
+      (error "WL (~A) is not applicable to ~A" n seq)))
 
 (defun wr (seq &optional (n 0))
   (if (>= (length-r seq) 1)
-      (list (remove-nth-r n seq))
-      (error "")))
+      (list (sequent (l seq) (remove-nth-r n seq)))
+      (error "WR (~A) is not applicable to ~A" n seq)))
 
 ;; Contraction
 ;; A,A,Γ ⊢ Δ      Γ ⊢ A,A,Δ
 ;; ---------(CL)  ---------(CR)
 ;; A,Γ ⊢ Δ        Γ ⊢ A,Δ
-(defun cl (seq)
+(defun cl (seq &optional (n 0))
   (if (>= (length-l seq) 1)
-      (list (sequent (cons (nth-l 0 seq) (l seq)) (r seq)))
-      (error "")))
+      (list (sequent (cons (nth-l n seq) (l seq)) (r seq)))
+      (error "CL (~A) is not applicable to ~A" n seq)))
 
-(defun cr (seq)
+(defun cr (seq &optional (n 0))
   (if (>= (length-r seq) 1)
-      (list (sequent (l seq) (cons (nth-r 0 seq) (r seq))))
-      (error "")))
+      (list (sequent (l seq) (cons (nth-r n seq) (r seq))))
+      (error "CR (~A) is not applicable to ~A" n seq)))
 
 
 ;; Permutation
@@ -208,11 +208,11 @@
       (let ((l (subseq (l seq) 0)))
         (rotatef (nth n l) (nth m l))
         (list (sequent l (r seq))))
-      (error "")))
+      (error "PL (~A ~A) is not applicable to ~A" n m seq)))
 
 (defun pr (seq n m)
   (if (> (length-r seq) (max m n))
       (let ((r (subseq (r seq) 0)))
         (rotatef (nth n r) (nth m r))
         (list (sequent (l seq) r)))
-      (error "")))
+      (error "PR (~A ~A) is not applicable to ~A" n m seq)))

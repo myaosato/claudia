@@ -5,7 +5,7 @@
                 :sequent
                 :sequent-list)
   (:export :goal
-           :do-step))
+           :app))
 (in-package :claudia/goal)
 
 ;; ****************************************************************
@@ -30,8 +30,8 @@
 (defun nth-seq (n goal)
   (nth n (sequents goal)))
 
-(defun do-step (goal n rule args)
+(defun app (goal n rule &rest args)
   (let ((result (apply rule (nth-seq n goal) args)))
-    (apply #'goal `(,@(subseq (sequents goal) 0 n)
-                    ,@result
-                    ,@(subseq (sequents goal) (1+ n))))))
+    (apply #'goal (append (subseq (sequents goal) 0 n)
+                          result
+                          (subseq (sequents goal) (1+ n))))))

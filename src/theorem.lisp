@@ -30,7 +30,7 @@
                :for ,n := (car ,step)
                :for ,rule := (cadr ,step)
                :for ,args := (cddr ,step)
-               :do (setf ,current-goal (do-step ,current-goal ,n ,rule ,args))
+               :do (setf ,current-goal (apply #'app ,current-goal ,n ,rule ,args))
                :do (format t "~16,,,'-A [~A]~%" "" ,rule)
                :do (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
                      (format t "~W~%" ,current-goal)))

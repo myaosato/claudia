@@ -5,13 +5,7 @@
   (:shadowing-import-from :claudia/formula
                           :substitute
                           :substitutable)
-  (:export :∧ :∧-1 :∧-2
-           :∨ :∨-1 :∨-2
-           :¬ :¬-1
-           :→ :→-1 :→-2
-           :prop :def-predicate
-           ;; 
-           :id :cut
+  (:export :id :cut
            :and-l1 :and-l2 :and-r
            :or-l :or-r1 :or-r2
            :not-l :not-r

@@ -2,6 +2,7 @@
   (:nicknames :claudia/examples/cpl)
   (:use :cl
         :claudia/theorem
+        :claudia/formula
         :claudia/lk)
   (:export :law-of-exclded-middle
            :material-implication-1

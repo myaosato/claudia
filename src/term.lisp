@@ -116,4 +116,3 @@
                                  (t (error "invalid term-spec, term-spec := (list symbol (or :const :var))")))))
                    term-spec-list))
      ,@body))
-  

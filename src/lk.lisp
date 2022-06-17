@@ -132,7 +132,7 @@
 (defun forall-l (seq term &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (and (typep focus '∀)
-             (substitutable focus (∀-var focus) term))
+             (substitutable (∀-formula focus) (∀-var focus) term))
         (list (sequent (replace-nth-l n (substitute (∀-formula focus) (∀-var focus) term) seq) (r seq)))
         (error "FORALL-L (~A) is not applicable to ~A" n seq))))
 
@@ -159,7 +159,7 @@
 (defun exists-r (seq term &optional (n 0))
   (let ((focus (nth-r n seq)))
     (if (and (typep focus '∃)
-             (substitutable focus (∃-var focus) term))
+             (substitutable (∃-formula focus) (∃-var focus) term))
         (list (sequent (l seq) (replace-nth-r n (substitute (∃-formula focus) (∃-var focus) term) seq)))
         (error "EXISTS-R (~A) is not applicable to ~A" n seq))))
 

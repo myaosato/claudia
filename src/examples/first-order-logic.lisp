@@ -4,16 +4,15 @@
         :claudia/theorem
         :claudia/term
         :claudia/formula
-        :claudia/lk)
+        :claudia/command)
   (:export :specialization))
 (in-package :claudia/examples/first-order-logic)
 
 (def-predicate p 1)
 
-(let ((x (var "x"))
-      (a (const "a")))
-  (def-theorem specialization (→ (∀ x (p x)) (∃ x (p x)))
-    (0 to-r)
-    (0 forall-l a)
-    (0 exists-r a)
-    (0 id)))
+(def-theorem specialization (→ (∀ x (p x)) (∃ x (p x))) goal
+    nil (x y)
+  (to-r goal 0)
+  (forall-l goal 0 y)
+  (exists-r goal 0 y)
+  (id goal 0))

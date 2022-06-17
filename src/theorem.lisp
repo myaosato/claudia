@@ -1,8 +1,16 @@
 (defpackage :claudia/theorem
   (:use :cl
-        :claudia/sequent
-        :claudia/goal
-        :claudia/pprint)
+        :claudia/command)
+  (:import-from :claudia/term
+                :var)
+  (:import-from :claudia/formula
+                :prop)
+  (:import-from :claudia/sequent
+                :sequent)
+  (:import-from :claudia/goal
+                :goal)
+  (:import-from :claudia/pprint
+                :print-claudia-print-dispatch)
   (:export :def-theorem))
 (in-package :claudia/theorem)
 
@@ -13,25 +21,18 @@
 ;;   - structure of theorem
 ;;   - separate definition(structure) and printer
 ;; ****************************************************************
-(defmacro def-theorem (name theorem &body proof)
-  (let ((current-goal (gensym "GOAL-"))
-        (step (gensym "STEP-"))
-        (n (gensym "N-"))
-        (rule (gensym "RULE-"))
-        (args (gensym "ARGS-"))
-        (steps (mapcar (lambda (x) `(list ,(nth 0 x) ',(nth 1 x) ,@(nthcdr 2 x)))
-                       proof)))
-    `(defun ,name ()
-       (let ((,current-goal (goal (sequent nil (list ,theorem)))))
+
+(defmacro def-theorem (name theorem current-goal props vars &body proof)
+  `(defun ,name ()
+     (let (,@(mapcar (lambda (sym) (list sym `(prop ',sym))) props)
+           ,@(mapcar (lambda (sym) (list sym `(var ',sym))) vars))
+       (let ((,current-goal (goal (sequent nil (list ,theorem))))
+             (*print-pprint-dispatch* print-claudia-print-dispatch))
          (format t "~16,,,'-A [GOAL]~%" "")
-         (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-           (format t "~W~%" ,current-goal))
-         (loop :for ,step :in (list ,@steps)
-               :for ,n := (car ,step)
-               :for ,rule := (cadr ,step)
-               :for ,args := (cddr ,step)
-               :do (setf ,current-goal (apply #'app ,current-goal ,n ,rule ,args))
-               :do (format t "~16,,,'-A [~A]~%" "" ,rule)
-               :do (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-                     (format t "~W~%" ,current-goal)))
-         ,current-goal))))
+         (format t "~W~%" ,current-goal)
+         ,@(mapcar (lambda (command)
+                     `(progn 
+                        (setf ,current-goal ,command)
+                        (format t "~16,,,'-A [~A]~%" "" ',(car command))
+                        (format t "~W~%" ,current-goal)))
+                   proof)))))

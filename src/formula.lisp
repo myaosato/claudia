@@ -214,13 +214,11 @@
    (constructor :initarg :constructor :reader constructor)))
 (defmacro def-predicate (name arity)
   (declare (type symbol name))
-  `(labels ((%c (name constructor &rest terms)
-              (make-instance 'predicate
-                             :name name
-                             :terms (coerce terms '(vector term ,arity))
-                             :constructor constructor))
-            (c (&rest terms) (apply #'%c ',name #'c terms)))
-     (defun ,name (&rest terms) (apply #'%c ',name #'c terms))))
+  `(defun ,name (&rest terms)
+       (make-instance 'predicate
+                      :name ',name
+                      :terms (coerce terms '(vector term ,arity))
+                      :constructor #',name)))
 (defmethod print-object ((formula predicate) stream)
   (format stream "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list)))
 (defmethod pprint-formula ((formula predicate) stream)

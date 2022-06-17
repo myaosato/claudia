@@ -75,13 +75,11 @@
   (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (coerce (terms term) 'list)))))
 (defmacro def-func (name arity)
   (declare (type symbol name))
-  `(labels ((%c (name constructor &rest terms)
-              (make-instance 'func
-                             :name name
-                             :terms (coerce terms '(vector term ,arity))
-                             :constructor constructor))
-            (c (&rest terms) (apply #'%c ',name #'c terms)))
-     (defun ,name (&rest terms) (apply #'%c ',name #'c terms))))
+  `(defun ,name (&rest terms)
+     (make-instance 'func
+                    :name ',name
+                    :terms (coerce terms '(vector term ,arity))
+                    :constructor #',name)))
 (defmethod print-object ((term func) stream)
   (format stream "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list)))
 (defmethod pprint-term ((term func) stream)

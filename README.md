@@ -53,6 +53,48 @@ CL-USER> (proof-hist)
 ---------------- [ID]
 Complete !!
 NIL
+CL-USER> (export-proof)
+(DEF-THEOREM #:RANDOM-NAME-638
+    (→ (→ (→ A B) A) A)
+    (:PROPS (B A) :VARS NIL)
+  (TO-R 0 0)
+  (TO-L 0 0)
+  (TO-R 0 0)
+  (ID 0)
+  (ID 0))
+T
+CL-USER> (undo)
+---------------- [GOAL]
+[0]:   ⊢  (((A → B) → A) → A)
+---------------- [TO-R]
+[0]: ((A → B) → A)  ⊢  A
+---------------- [TO-L]
+[0]:   ⊢  (A → B), A
+[1]: A  ⊢  A
+---------------- [TO-R]
+[0]: A  ⊢  B, A
+[1]: A  ⊢  A
+---------------- [ID]
+[0]: A  ⊢  A
+POP: [
+---------------- [ID]
+#<GOAL: Complete !! >
+]
+NIL
+CL-USER> (proof-hist)
+---------------- [GOAL]
+[0]:   ⊢  (((A → B) → A) → A)
+---------------- [TO-R]
+[0]: ((A → B) → A)  ⊢  A
+---------------- [TO-L]
+[0]:   ⊢  (A → B), A
+[1]: A  ⊢  A
+---------------- [TO-R]
+[0]: A  ⊢  B, A
+[1]: A  ⊢  A
+---------------- [ID]
+[0]: A  ⊢  A
+NIL
 CL-USER> 
 ```
 

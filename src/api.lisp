@@ -180,9 +180,11 @@
       (make-package package-name :use (list :cl :claudia/theorem)))
     `(progn
        (in-package ,package-name)
+       (import ',(mapcar #'car claudia/environment:props))
+       (import ',(mapcar #'car claudia/environment:vars))
        (format t "~S~%" `(claudia/theorem:def-theorem ,',name ,claudia/environment:current-theorem
-                             (:props ,(mapcar (lambda (x) (symbol-name (car x))) claudia/environment:props)
-                              :vars ,(mapcar (lambda (x) (symbol-name (car x))) claudia/environment:vars))
-                           ,@(mapcar #'car claudia/environment:history)))
+                             (:props ,(mapcar #'car claudia/environment:props)
+                              :vars ,(mapcar #'car claudia/environment:vars))
+                           ,@(mapcar #'car (cdr (reverse claudia/environment:history)))))
        (in-package ,current-package-name)
        (ignore-errors (delete-package 'claudia/make-theorem)))))

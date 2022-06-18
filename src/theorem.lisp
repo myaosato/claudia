@@ -38,7 +38,7 @@
 ;;   - separate definition(structure) and printer
 ;; ****************************************************************
 
-(defmacro def-theorem (name theorem current-goal props vars &body proof)
+(defmacro def-theorem (name theorem (&key (props nil) (vars nil)) &body proof)
   `(defun ,name ()
      (let (,@(mapcar (lambda (sym) (list sym `(prop ',sym))) props)
            ,@(mapcar (lambda (sym) (list sym `(var ',sym))) vars))

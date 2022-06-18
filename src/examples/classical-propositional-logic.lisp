@@ -13,8 +13,8 @@
 ;; ex. law of exclded middle
 ;; ⊢ A∨¬A
 ;; ****************************************************************
-(def-theorem law-of-exclded-middle (∨ a (¬ a)) goal
-    (a) nil
+(def-theorem law-of-exclded-middle (∨ a (¬ a))
+  (:props (a))
   (cr 0)
   (or-r1 0)
   (or-r2 0 1)
@@ -25,8 +25,8 @@
 ;; ex. material implication 1
 ;; A → B ⊢ ¬A ∨ B
 ;; ****************************************************************
-(def-theorem material-implication-1 (→ (→ A B) (∨ (¬ a) b)) goal
-    (a b) nil
+(def-theorem material-implication-1 (→ (→ A B) (∨ (¬ a) b))
+  (:props (a b))
   (to-r 0)
   (to-l 0)
   (or-r1 0 1)
@@ -39,8 +39,8 @@
 ;; ex. material implication 2
 ;; ⊢ (¬A ∨ B) → (A → B)
 ;; ****************************************************************
-(def-theorem material-implication-2 (→ (∨ (¬ a) b) (→ A B)) goal
-    (a b) nil
+(def-theorem material-implication-2 (→ (∨ (¬ a) b) (→ A B))
+  (:props (a b))
   (to-r 0)
   (to-r 0)
   (or-l 0 1)
@@ -52,8 +52,8 @@
 ;; ex. Peirce's law
 ;; ⊢ ((A → B) → A) → A
 ;; ****************************************************************
-(def-theorem |Perice's law| (→ (→ (→ a b) a) a) goal
-    (a b) nil
+(def-theorem |Perice's law| (→ (→ (→ a b) a) a)
+  (:props (a b))
   (to-r 0)
   (to-l 0)
   (id 1)

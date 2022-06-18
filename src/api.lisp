@@ -6,9 +6,10 @@
                 :reset-claudia-environment)
   (:import-from :claudia/command)
   (:import-from :claudia/term
-                :def-func :const)
+                :var :def-func :const)
   (:import-from :claudia/formula
-                :∧ :∨ :¬ :→ :∀ :∃ :def-predicate)
+                :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
+                :prop)
   (:import-from :claudia/sequent
                 :sequent)
   (:import-from :claudia/goal
@@ -16,7 +17,7 @@
   (:import-from :claudia/pprint
                 :print-claudia-print-dispatch)
   (:export :start-proof :proof-hist
-           :prop :var
+           :def-prop :def-var
            :id :cut
            :and-l1 :and-l2 :and-r
            :or-l :or-r1 :or-r2
@@ -36,16 +37,16 @@
            :reset-claudia-environment))
 (in-package :claudia/api)
 
-(defmacro prop (sym)
+(defmacro def-prop (sym)
   `(progn
-     (defvar ,sym (claudia/formula:prop ',sym))
+     (defvar ,sym (prop ',sym))
      (push (cons ',sym ,sym) claudia/environment:props)
      (format t "PROP: ~A: ~A~%" ',sym ,sym)
      ,sym))
 
-(defmacro var (sym)
+(defmacro def-var (sym)
   `(progn
-     (defvar ,sym (claudia/term:var ',sym))
+     (defvar ,sym (var ',sym))
      (push (cons ',sym ,sym) claudia/environment:vars)
      (format t "VAR: ~A: ~A~%" ',sym ,sym)
      ,sym))
@@ -53,8 +54,8 @@
 (defmacro start-proof (theorem &key (props nil) (vars nil))
   `(progn
      (reset-claudia-environment)
-     ,@(mapcar (lambda (sym) (list 'prop sym)) props)
-     ,@(mapcar (lambda (sym) (list 'var sym)) vars)
+     ,@(mapcar (lambda (sym) (list 'def-prop sym)) props)
+     ,@(mapcar (lambda (sym) (list 'def-var sym)) vars)
      (setf current-goal (goal (sequent nil (list ,theorem))))
      (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
        (format t "~16,,,'-A [GOAL]~%" "")

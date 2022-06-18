@@ -12,7 +12,7 @@
 
 (def-theorem specialization (→ (∀ x (p x)) (∃ x (p x))) goal
     nil (x y)
-  (to-r goal 0)
-  (forall-l goal 0 y)
-  (exists-r goal 0 y)
-  (id goal 0))
+  (to-r 0)
+  (forall-l 0 y)
+  (exists-r 0 y)
+  (id 0))

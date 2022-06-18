@@ -1,5 +1,6 @@
 (defpackage :claudia/command
   (:use :cl
+        :claudia/environment
         :claudia/goal)
   (:import-from :claudia/lk)
   (:export :id :cut
@@ -14,68 +15,69 @@
            :pl :pr))
 (in-package :claudia/command)
 
-(defun id (goal n)
-  (app goal n #'claudia/lk:id))
 
-(defun cut (goal n formula)
-  (app goal n #'claudia/lk:cut formula))
+(defun id (n)
+  (app current-goal n #'claudia/lk:id))
 
-(defun and-l1 (goal n &optional (m 0))
-  (app goal n #'claudia/lk:and-l1 m))
+(defun cut (n formula)
+  (app current-goal n #'claudia/lk:cut formula))
 
-(defun and-l2 (goal n &optional (m 0))
-  (app goal n #'claudia/lk:and-l2 m))
+(defun and-l1 (n &optional (m 0))
+  (app current-goal n #'claudia/lk:and-l1 m))
 
-(defun and-r (goal n &optional (m 0))
-  (app goal n #'claudia/lk:and-r m))
+(defun and-l2 (n &optional (m 0))
+  (app current-goal n #'claudia/lk:and-l2 m))
 
-(defun or-l (goal n &optional (m 0))
-  (app goal n #'claudia/lk:or-l m))
+(defun and-r (n &optional (m 0))
+  (app current-goal n #'claudia/lk:and-r m))
 
-(defun or-r1 (goal n &optional (m 0))
-  (app goal n #'claudia/lk:or-r1 m))
+(defun or-l (n &optional (m 0))
+  (app current-goal n #'claudia/lk:or-l m))
 
-(defun or-r2 (goal n &optional (m 0))
-  (app goal n #'claudia/lk:or-r2 m))
+(defun or-r1 (n &optional (m 0))
+  (app current-goal n #'claudia/lk:or-r1 m))
 
-(defun not-l (goal n &optional (m 0))
-  (app goal n #'claudia/lk:not-l m))
+(defun or-r2 (n &optional (m 0))
+  (app current-goal n #'claudia/lk:or-r2 m))
 
-(defun not-r (goal n &optional (m 0))
-  (app goal n #'claudia/lk:not-r m))
+(defun not-l (n &optional (m 0))
+  (app current-goal n #'claudia/lk:not-l m))
 
-(defun to-l (goal n &optional (m 0))
-  (app goal n #'claudia/lk:to-l m))
+(defun not-r (n &optional (m 0))
+  (app current-goal n #'claudia/lk:not-r m))
 
-(defun to-r (goal n &optional (m 0))
-  (app goal n #'claudia/lk:to-r m))
+(defun to-l (n &optional (m 0))
+  (app current-goal n #'claudia/lk:to-l m))
 
-(defun forall-l (goal n term &optional (m 0))
-  (app goal n #'claudia/lk:forall-l term m))
+(defun to-r (n &optional (m 0))
+  (app current-goal n #'claudia/lk:to-r m))
 
-(defun forall-r (goal n &optional (m 0))
-  (app goal n #'claudia/lk:forall-r m))
+(defun forall-l (n term &optional (m 0))
+  (app current-goal n #'claudia/lk:forall-l term m))
 
-(defun exists-l (goal n &optional (m 0))
-  (app goal n #'claudia/lk:exists-l m))
+(defun forall-r (n &optional (m 0))
+  (app current-goal n #'claudia/lk:forall-r m))
 
-(defun exists-r (goal n term &optional (m 0))
-  (app goal n #'claudia/lk:exists-r term m))
+(defun exists-l (n &optional (m 0))
+  (app current-goal n #'claudia/lk:exists-l m))
 
-(defun wl (goal n &optional (m 0))
-  (app goal n #'claudia/lk:wl m))
+(defun exists-r (n term &optional (m 0))
+  (app current-goal n #'claudia/lk:exists-r term m))
 
-(defun wr (goal n &optional (m 0))
-  (app goal n #'claudia/lk:wr m))
+(defun wl (n &optional (m 0))
+  (app current-goal n #'claudia/lk:wl m))
 
-(defun cl (goal n &optional (m 0))
-  (app goal n #'claudia/lk:cl m))
+(defun wr (n &optional (m 0))
+  (app current-goal n #'claudia/lk:wr m))
 
-(defun cr (goal n &optional (m 0))
-  (app goal n #'claudia/lk:cr m))
+(defun cl (n &optional (m 0))
+  (app current-goal n #'claudia/lk:cl m))
 
-(defun pl (goal n m l)
-  (app goal n #'claudia/lk:pl m l))
+(defun cr (n &optional (m 0))
+  (app current-goal n #'claudia/lk:cr m))
 
-(defun pr (goal n m l)
-  (app goal n #'claudia/lk:pr m l))
+(defun pl (n m l)
+  (app current-goal n #'claudia/lk:pl m l))
+
+(defun pr (n m l)
+  (app current-goal n #'claudia/lk:pr m l))

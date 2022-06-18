@@ -1,5 +1,6 @@
 (defpackage :claudia/theorem
   (:use :cl
+        :claudia/environment
         :claudia/command)
   (:import-from :claudia/term
                 :var)
@@ -26,13 +27,13 @@
   `(defun ,name ()
      (let (,@(mapcar (lambda (sym) (list sym `(prop ',sym))) props)
            ,@(mapcar (lambda (sym) (list sym `(var ',sym))) vars))
-       (let ((,current-goal (goal (sequent nil (list ,theorem))))
-             (*print-pprint-dispatch* print-claudia-print-dispatch))
-         (format t "~16,,,'-A [GOAL]~%" "")
-         (format t "~W~%" ,current-goal)
-         ,@(mapcar (lambda (command)
-                     `(progn 
-                        (setf ,current-goal ,command)
-                        (format t "~16,,,'-A [~A]~%" "" ',(car command))
-                        (format t "~W~%" ,current-goal)))
-                   proof)))))
+       (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
+         (with-current-goal (goal (sequent nil (list ,theorem)))
+           (format t "~16,,,'-A [GOAL]~%" "")
+           (format t "~W~%" current-goal)
+           ,@(mapcar (lambda (command)
+                       `(progn 
+                          (setf current-goal ,command)
+                          (format t "~16,,,'-A [~A]~%" "" ',(car command))
+                          (format t "~W~%" current-goal)))
+                     proof))))))

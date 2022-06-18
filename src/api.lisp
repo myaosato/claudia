@@ -1,8 +1,10 @@
 (defpackage :claudia/api
   (:use :cl)
+  (:import-from :claudia/theorem)
   (:import-from :claudia/environment
                 :history
                 :current-goal
+                :current-theorem
                 :reset-claudia-environment)
   (:import-from :claudia/command)
   (:import-from :claudia/term
@@ -16,7 +18,7 @@
                 :goal)
   (:import-from :claudia/pprint
                 :print-claudia-print-dispatch)
-  (:export :start-proof :proof-hist
+  (:export :start-proof :proof-hist :undo :export-proof
            :def-prop :def-var
            :id :cut
            :and-l1 :and-l2 :and-r
@@ -56,6 +58,7 @@
      (reset-claudia-environment)
      ,@(mapcar (lambda (sym) (list 'def-prop sym)) props)
      ,@(mapcar (lambda (sym) (list 'def-var sym)) vars)
+     (setf current-theorem ',theorem)
      (setf current-goal (goal (sequent nil (list ,theorem))))
      (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
        (format t "~16,,,'-A [GOAL]~%" "")
@@ -63,82 +66,82 @@
        (push (cons nil current-goal) history))
      current-goal))
 
-(defmacro with-environment (command)
+(defmacro with-environment (command &rest args)
   ;; TODO error-handling
-  `(let ((new-goal ,command))
+  `(let ((new-goal (,command ,@args)))
      (setf current-goal new-goal)
      (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-       (format t "~16,,,'-A [~A]~%" "" ',(car command))
+       (format t "~16,,,'-A [~A]~%" "" ',command)
        (format t "~W~%" current-goal)
-       (push (cons ',command current-goal) history))
+       (push (cons (cons ',command (list ,@args)) current-goal) history))
      current-goal))
 
 ;; api comannd
 (defun id (n)
-  (with-environment (claudia/command:id n)))
+  (with-environment claudia/command:id n))
 
 (defun cut (n formula)
-  (with-environment (claudia/command:cut n formula)))
+  (with-environment claudia/command:cut n formula))
 
 (defun and-l1 (n &optional (m 0))
-  (with-environment (claudia/command:and-l1 n m)))
+  (with-environment claudia/command:and-l1 n m))
 
 (defun and-l2 (n &optional (m 0))
-  (with-environment (claudia/command:and-l2 n m)))
+  (with-environment claudia/command:and-l2 n m))
 
 (defun and-r (n &optional (m 0))
-  (with-environment (claudia/command:and-r n m)))
+  (with-environment claudia/command:and-r n m))
 
 (defun or-l (n &optional (m 0))
-  (with-environment (claudia/command:or-l n m)))
+  (with-environment claudia/command:or-l n m))
 
 (defun or-r1 (n &optional (m 0))
-  (with-environment (claudia/command:or-r1 n m)))
+  (with-environment claudia/command:or-r1 n m))
 
 (defun or-r2 (n &optional (m 0))
-  (with-environment (claudia/command:or-r2 n m)))
+  (with-environment claudia/command:or-r2 n m))
 
 (defun not-l (n &optional (m 0))
-  (with-environment (claudia/command:not-l n m)))
+  (with-environment claudia/command:not-l n m))
 
 (defun not-r (n &optional (m 0))
-  (with-environment (claudia/command:not-r n m)))
+  (with-environment claudia/command:not-r n m))
 
 (defun to-l (n &optional (m 0))
-  (with-environment (claudia/command:to-l n m)))
+  (with-environment claudia/command:to-l n m))
 
 (defun to-r (n &optional (m 0))
-  (with-environment (claudia/command:to-r n m)))
+  (with-environment claudia/command:to-r n m))
 
 (defun forall-l (n term &optional (m 0))
-  (with-environment (claudia/command:forall-l n term m)))
+  (with-environment claudia/command:forall-l n term m))
 
 (defun forall-r (n &optional (m 0))
-  (with-environment (claudia/command:forall-r n m)))
+  (with-environment claudia/command:forall-r n m))
 
 (defun exists-l (n &optional (m 0))
-  (with-environment (claudia/command:exists-l n m)))
+  (with-environment claudia/command:exists-l n m))
 
 (defun exists-r (n term &optional (m 0))
-  (with-environment (claudia/command:exists-r n term m)))
+  (with-environment claudia/command:exists-r n term m))
 
 (defun wl (n &optional (m 0))
-  (with-environment (claudia/command:wl n m)))
+  (with-environment claudia/command:wl n m))
 
 (defun wr (n &optional (m 0))
-  (with-environment (claudia/command:wr n m)))
+  (with-environment claudia/command:wr n m))
 
 (defun cl (n &optional (m 0))
-  (with-environment (claudia/command:cl n m)))
+  (with-environment claudia/command:cl n m))
 
 (defun cr (n &optional (m 0))
-  (with-environment (claudia/command:cr n m)))
+  (with-environment claudia/command:cr n m))
 
 (defun pl (n m l)
-  (with-environment (claudia/command:pl n m l)))
+  (with-environment claudia/command:pl n m l))
 
 (defun pr (n m l)
-  (with-environment (claudia/command:pr n m l)))
+  (with-environment claudia/command:pr n m l))
 
 ;; api helper
 (defun props ()
@@ -156,3 +159,29 @@
                   (format t "~16,,,'-A [GOAL]~%" "")
                   (format t "~16,,,'-A [~A]~%" "" (caar step)))
           :do (format t "~W~%" (cdr step)))))
+
+(defun undo ()
+  (cond ((cdr history)
+         (let ((last-command (car history)))
+           (setf history (cdr history))
+           (setf current-goal (cdar history))
+           (proof-hist)
+           (format t "POP: [~%")
+           (format t "~16,,,'-A [~A]~%" "" (caar last-command))
+           (format t "~W~%" (cdr last-command))
+           (format t "]~%")))
+        (t
+         (format t "no history~%"))))
+
+(defmacro export-proof (&optional (name (gensym "RANDOM-NAME-")) (package-name 'claudia/make-theorem))
+  (let ((current-package-name (package-name *package*)))
+    (unless (find-package package-name)
+      (make-package package-name :use (list :cl :claudia/theorem)))
+    `(progn
+       (in-package ,package-name)
+       (format t "~S~%" `(claudia/theorem:def-theorem ,',name ,claudia/environment:current-theorem
+                             (:props ,(mapcar (lambda (x) (symbol-name (car x))) claudia/environment:props)
+                              :vars ,(mapcar (lambda (x) (symbol-name (car x))) claudia/environment:vars))
+                           ,@(mapcar #'car claudia/environment:history)))
+       (in-package ,current-package-name)
+       (ignore-errors (delete-package 'claudia/make-theorem)))))

@@ -5,6 +5,7 @@
   (:export :reset-claudia-environment
            :with-current-goal
            :current-goal
+           :current-theorem
            :history
            :props
            :vars))
@@ -15,11 +16,13 @@
 (defvar history nil)
 (defvar props nil)
 (defvar vars nil)
+(defvar current-theorem nil)
 
 (defun reset-claudia-environment ()
   (setf history nil)
   (setf props nil)
   (setf vars nil)
+  (setf current-theorem nil)
   (setf current-goal void))
 
 (defmacro with-current-goal (goal &body body)

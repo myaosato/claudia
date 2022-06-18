@@ -64,7 +64,7 @@
        (format t "~16,,,'-A [GOAL]~%" "")
        (format t "~W~%" current-goal)
        (push (cons nil current-goal) history))
-     current-goal))
+     t))
 
 (defmacro with-environment (command &rest args)
   ;; TODO error-handling

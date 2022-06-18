@@ -68,12 +68,13 @@
 
 (defmacro with-environment (command &rest args)
   ;; TODO error-handling
-  `(let ((new-goal (,command ,@args)))
+  `(let* ((arg-list (list ,@args))
+          (new-goal (apply #',command arg-list)))
      (setf current-goal new-goal)
      (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
        (format t "~16,,,'-A [~A]~%" "" ',command)
        (format t "~W~%" current-goal)
-       (push (cons (cons ',command (list ,@args)) current-goal) history))
+       (push (cons (cons ',command arg-list) current-goal) history))
      current-goal))
 
 ;; api comannd

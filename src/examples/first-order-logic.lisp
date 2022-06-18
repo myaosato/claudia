@@ -1,11 +1,7 @@
 (defpackage :claudia/examples/first-order-logic
   (:nicknames :claudia/examples/fol)
   (:use :cl
-        :claudia/theorem
-        :claudia/term
-        :claudia/formula
-        :claudia/command)
-  (:export :specialization))
+        :claudia/theorem))
 (in-package :claudia/examples/first-order-logic)
 
 (def-predicate p 1)

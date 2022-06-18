@@ -3,16 +3,31 @@
         :claudia/environment
         :claudia/command)
   (:import-from :claudia/term
-                :var)
+                :var :def-func)
   (:import-from :claudia/formula
-                :prop)
+                :∧ :∨ :¬ :→ :∀ :∃ :prop :def-predicate)
   (:import-from :claudia/sequent
                 :sequent)
   (:import-from :claudia/goal
                 :goal)
   (:import-from :claudia/pprint
                 :print-claudia-print-dispatch)
-  (:export :def-theorem))
+  (:export :def-theorem
+           ;; command
+           :id :cut
+           :and-l1 :and-l2 :and-r
+           :or-l :or-r1 :or-r2
+           :not-l :not-r
+           :to-l :to-r
+           :forall-l :forall-r
+           :exists-l :exists-r
+           :wl :wr
+           :cl :cr
+           :pl :pr
+           ;; formula
+           :∧ :∨ :¬ :→ :∀ :∃ :prop :def-predicate
+           ;; 
+           :def-func))
 (in-package :claudia/theorem)
 
 ;; ****************************************************************

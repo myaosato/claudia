@@ -121,8 +121,8 @@
 (defun to-l (seq &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (typep focus '→)
-        (list (sequent (remove-nth-r n seq) (cons (→-1 focus) (r seq)))
-              (sequent (replace-nth-r n (→-2 focus) seq) (r seq)))
+        (list (sequent (remove-nth-l n seq) (cons (→-1 focus) (r seq)))
+              (sequent (replace-nth-l n (→-2 focus) seq) (r seq)))
         (error "TO-L (~A) is not applicable to ~A" n seq))))
 
 ;; For all

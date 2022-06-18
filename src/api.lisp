@@ -75,7 +75,7 @@
        (format t "~16,,,'-A [~A]~%" "" ',command)
        (format t "~W~%" current-goal)
        (push (cons (cons ',command arg-list) current-goal) history))
-     current-goal))
+     t))
 
 ;; api comannd
 (defun id (n)
@@ -163,14 +163,9 @@
 
 (defun undo ()
   (cond ((cdr history)
-         (let ((last-command (car history)))
-           (setf history (cdr history))
-           (setf current-goal (cdar history))
-           (proof-hist)
-           (format t "POP: [~%")
-           (format t "~16,,,'-A [~A]~%" "" (caar last-command))
-           (format t "~W~%" (cdr last-command))
-           (format t "]~%")))
+         (setf history (cdr history))
+         (setf current-goal (cdar history))
+         (proof-hist))
         (t
          (format t "no history~%"))))
 

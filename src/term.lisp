@@ -69,6 +69,7 @@
 ;; func
 (defclass func (term)
   ((name :initarg :name :reader name)
+   (arity :initarg :arity :reader arity)
    (terms :initarg :terms :reader terms :type (vector term *))
    (constructor :initarg :constructor :reader constructor)))
 (defmethod initialize-instance :after ((term func) &key)
@@ -78,14 +79,14 @@
   `(defun ,name (&rest terms)
      (make-instance 'func
                     :name ',name
+                    :arity ,arity
                     :terms (coerce terms '(vector term ,arity))
                     :constructor #',name)))
 (defmethod print-object ((term func) stream)
   (format stream "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list)))
 (defmethod pprint-term ((term func) stream)
-  (if (= (length (terms term)) 2)
-      (format stream "(~:W ~A ~:W)"
-              (aref (terms term) 0) (name term) (aref (terms term) 1))
+  (if (eql (arity term) 2)
+      (format stream "(~:W ~A ~:W)" (aref (terms term) 0) (name term) (aref (terms term) 1))
       (format stream "~A(~{~:W~^, ~})" (name term) (coerce (terms term) 'list))))
 (defmethod substitute ((place func) (var var) (term term))
   (apply (constructor place)

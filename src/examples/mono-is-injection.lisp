@@ -31,4 +31,11 @@
                     (∀ x (== (app g x) (app h x))))))
        (∀ x (∀ y (→ (== (app f x) (app f y))  (== x y)))))
     (:vars (x y f g h))
-  )
+  ;; WIP) just memo, it is not proof 
+  (TO-R 0 0)
+  (FORALL-L 0 G 0)
+  (FORALL-L 0 H 0)
+  (FORALL-R 0 0)
+  (FORALL-R 0 0)
+  (TO-R 0 0)
+  (TO-L 0 1))

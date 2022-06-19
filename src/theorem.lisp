@@ -13,6 +13,7 @@
   (:import-from :claudia/pprint
                 :print-claudia-print-dispatch)
   (:export :def-theorem
+           :def-const
            ;; command
            :id :cut
            :and-l1 :and-l2 :and-r
@@ -27,7 +28,7 @@
            ;; formula
            :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
            ;; term
-           :def-func :const))
+           :def-func))
 (in-package :claudia/theorem)
 
 ;; ****************************************************************
@@ -52,3 +53,7 @@
                           (format t "~16,,,'-A [~A]~%" "" ',(car command))
                           (format t "~W~%" current-goal)))
                      proof))))))
+
+(defmacro def-const (sym)
+  (declare (type symbol sym))
+  `(defvar ,sym (const ',sym)))

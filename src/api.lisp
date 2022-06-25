@@ -8,7 +8,7 @@
                 :reset-claudia-environment)
   (:import-from :claudia/command)
   (:import-from :claudia/term
-                :var :def-func :const)
+                :var :const :func)
   (:import-from :claudia/formula
                 :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
                 :prop)
@@ -34,7 +34,7 @@
            ;; formula
            :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
            ;; term
-           :def-func :const
+           :func :const
            ;; environment
            :reset-claudia-environment))
 (in-package :claudia/api)

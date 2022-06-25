@@ -2,15 +2,16 @@
   (:use :cl
         :claudia/pprint)
   (:shadow :substitute)
-  (:export :term :free-vars :var :const :constructor :term-=
-           :func :def-func))
+  (:export :term :free-vars :term-=
+           :var :const :func           
+           :term-list))
 (in-package :claudia/term)
 
 ;; ****************************************************************
 ;; meta data type
 ;;
-;; const := const-val | func const*
-;; term := const | var | func term*
+;; func := name terms*
+;; term := const | var | func
 ;;
 ;; ****************************************************************
 (defclass term nil
@@ -29,6 +30,11 @@
   (error "substitutable method for type ~A is not defined" (type-of place)))
 (defmethod term-= ((a term) (b term))
   (error "term-= method for type ~A is not defined" (type-of a)))
+(defun term-list-p (thing)
+  (and (listp thing)
+       (every (lambda (x) (typep x 'term)) thing)))
+(deftype term-list ()
+  `(satisfies term-list-p))
 
 ;; var
 (defclass var (term)
@@ -51,67 +57,39 @@
   (and (typep b 'var)
        (eq a b)))
 
-;; const-val
-(defclass const-val (term)
+;; const
+(defclass const (term)
   ((name :initarg :name :reader name)))
 (defun const (name)
-  (make-instance 'const-val :name name))
-(defmethod print-object ((term  const-val) stream)
+  (make-instance 'const :name name))
+(defmethod print-object ((term  const) stream)
     (format stream "~A" (name term)))
-(defmethod pprint-term ((term const-val) stream)
+(defmethod pprint-term ((term const) stream)
   (format stream "~A" (name term)))
-(defmethod substitute ((place const-val) (var var) (term term))
+(defmethod substitute ((place const) (var var) (term term))
   place)
-(defmethod term-= ((a const-val) (b term))
-  (and (typep b 'const-val)
+(defmethod term-= ((a const) (b term))
+  (and (typep b 'const)
        (eq a b)))
 
 ;; func
 (defclass func (term)
   ((name :initarg :name :reader name)
-   (arity :initarg :arity :reader arity)
-   (terms :initarg :terms :reader terms :type (vector term *))
-   (constructor :initarg :constructor :reader constructor)))
+   (terms :initarg :terms :reader terms :type term-list)))
+(defun func (name &rest terms)
+  (make-instance 'func :name name :terms terms))
 (defmethod initialize-instance :after ((term func) &key)
-  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (coerce (terms term) 'list)))))
-(defmacro def-func (name arity)
-  (declare (type symbol name))
-  `(defun ,name (&rest terms)
-     (make-instance 'func
-                    :name ',name
-                    :arity ,arity
-                    :terms (coerce terms '(vector term ,arity))
-                    :constructor #',name)))
+  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (terms term))
+                                  :initial-value (free-vars (name term)))))
 (defmethod print-object ((term func) stream)
-  (format stream "(~A ~{~A~^ ~})" (name term) (coerce (terms term) 'list)))
+  (format stream "(~A ~{~A~^ ~})" (name term) (terms term)))
 (defmethod pprint-term ((term func) stream)
-  (if (eql (arity term) 2)
-      (format stream "(~:W ~A ~:W)" (aref (terms term) 0) (name term) (aref (terms term) 1))
-      (format stream "~A(~{~:W~^, ~})" (name term) (coerce (terms term) 'list))))
+  (format stream "~W(~{~:W~^, ~})" (name term) (terms term)))
 (defmethod substitute ((place func) (var var) (term term))
-  (apply (constructor place)
-         (mapcar (lambda (x) (substitute x var term)) (coerce (terms place) 'list))))
+  (apply #'func
+         (substitute (name place) var term)
+         (mapcar (lambda (x) (substitute x var term)) (terms place))))
 (defmethod term-= ((a func) (b term))
   (and (typep b 'func)
-       (eq (constructor a) (constructor b))
-       (reduce (lambda (acc z) (and acc z))
-               (map 'list (lambda (aa bb) (term-= aa bb)) (terms a) (terms b)))))
-
-;; const (meta type)
-(defun func-const*-p (thing)
-  (and (typep thing 'func)
-       (typep (terms thing) '(simple-array const (*)))))
-(deftype const ()
-  `(or const-val
-       (satisfies func-const*-p)))
-
-(defmacro with-terms (term-spec-list &body body)
-  `(let (,@(mapcar (lambda (term-spec)
-                     (list (car term-spec)
-                           (cond ((eq (cadr term-spec) :var)
-                                  (var (car term-spec)))
-                                 ((eq (cadr term-spec) :const)
-                                  (const (car term-spec)))
-                                 (t (error "invalid term-spec, term-spec := (list symbol (or :const :var))")))))
-                   term-spec-list))
-     ,@body))
+       (term-= (name a) (name b))
+       (every #'term-= (terms a) (terms b))))

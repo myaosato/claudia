@@ -3,7 +3,7 @@
         :claudia/environment
         :claudia/command)
   (:import-from :claudia/term
-                :var :def-func :const)
+                :var :const :func)
   (:import-from :claudia/formula
                 :∧ :∨ :¬ :→ :∀ :∃ :prop :def-predicate)
   (:import-from :claudia/sequent
@@ -28,7 +28,7 @@
            ;; formula
            :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
            ;; term
-           :def-func))
+           :func))
 (in-package :claudia/theorem)
 
 ;; ****************************************************************

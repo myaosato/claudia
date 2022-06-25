@@ -5,9 +5,9 @@
   (:export :specialization))
 (in-package :claudia/examples/first-order-logic)
 
-(def-predicate p 1)
+(def-const p)
 
-(def-theorem specialization (→ (∀ x (p x)) (∃ x (p x)))
+(def-theorem specialization (→ (∀ x (predicate p x)) (∃ x (predicate p x)))
   (:vars (x))
   (to-r)
   (forall-l x)

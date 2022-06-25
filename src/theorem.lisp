@@ -5,7 +5,7 @@
   (:import-from :claudia/term
                 :var :const :func)
   (:import-from :claudia/formula
-                :∧ :∨ :¬ :→ :∀ :∃ :prop :def-predicate)
+                :∧ :∨ :¬ :→ :∀ :∃ :prop :predicate)
   (:import-from :claudia/sequent
                 :sequent)
   (:import-from :claudia/goal
@@ -26,7 +26,7 @@
            :cl :cr
            :pl :pr
            ;; formula
-           :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
+           :∧ :∨ :¬ :→ :∀ :∃ :predicate
            ;; term
            :func))
 (in-package :claudia/theorem)

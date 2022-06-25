@@ -82,7 +82,7 @@
   (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (terms term))
                                   :initial-value (free-vars (name term)))))
 (defmethod print-object ((term func) stream)
-  (format stream "(~A ~{~A~^ ~})" (name term) (terms term)))
+  (format stream "(~A ~A ~{~A~^ ~})" 'func (name term) (terms term)))
 (defmethod pprint-term ((term func) stream)
   (format stream "~W(~{~:W~^, ~})" (name term) (terms term)))
 (defmethod substitute ((place func) (var var) (term term))

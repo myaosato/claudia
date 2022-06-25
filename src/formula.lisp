@@ -12,8 +12,7 @@
            :→ :→-1 :→-2
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
-           :prop
-           :predicate :def-predicate :constructor))
+           :prop :predicate))
 (in-package :claudia/formula)
 
 ;; ****************************************************************
@@ -210,31 +209,24 @@
 ;; predicate
 (defclass predicate (atomic)
   ((name :initarg :name :reader name)
-   (arity :initarg :arity :reader arity)
-   (terms :initarg :terms :reader terms :type (vector term *))
-   (constructor :initarg :constructor :reader constructor)))
-(defmacro def-predicate (name arity)
-  (declare (type symbol name))
-  `(defun ,name (&rest terms)
-       (make-instance 'predicate
-                      :name ',name
-                      :arity ,arity
-                      :terms (coerce terms '(vector term ,arity))
-                      :constructor #',name)))
-(defmethod print-object ((formula predicate) stream)
-  (format stream "(~A ~{~A~^ ~})" (name formula) (coerce (terms formula) 'list)))
-(defmethod pprint-formula ((formula predicate) stream)
-  (if (eql (arity formula) 2)
-      (format stream "(~:W ~A ~:W)" (aref (terms formula) 0) (name formula) (aref (terms formula) 1))
-      (format stream "~A(~{~:W~^ ~})" (name formula) (coerce (terms formula) 'list))))
+   (terms :initarg :terms :reader terms :type term-list)))
 (defmethod initialize-instance :after ((formula predicate) &key)
-  (setf (%free-vars formula) (reduce #'union (mapcar #'free-vars (coerce (terms formula) 'list)))))
+  (setf (%free-vars formula) (reduce #'union
+                                     (mapcar #'free-vars (terms formula))
+                                     :initial-value (free-vars (name formula)))))
+(defun predicate (name &rest terms)
+  (make-instance 'predicate :name name :terms terms))
+(defmethod print-object ((formula predicate) stream)
+  (format stream "(~A ~A ~{~A~^ ~})" 'predicate (name formula) (terms formula)))
+(defmethod pprint-formula ((formula predicate) stream)
+  (if (= (length (terms formula)) 2) ;; ?
+      (format stream "(~:W ~:W ~:W)" (nth 0 (terms formula)) (name formula) (nth 1 (terms formula)))
+      (format stream "~:W(~{~:W~^ ~})" (name formula) (terms formula))))
 (defmethod substitute ((place predicate) (var var) (term term))
-  (apply (constructor place)
-         (mapcar (lambda (x) (substitute x var term)) (coerce (terms place) 'list))))
+  (apply #'predicate
+         (substitute (name place) var term)
+         (mapcar (lambda (x) (substitute x var term)) (terms place))))
 (defmethod formula-= ((a predicate) (b formula))
   (and (typep b 'predicate)
-       ;; TODO
-       (eq (constructor a) (constructor b))
-       (reduce (lambda (acc z) (and acc z))
-               (map 'list (lambda (aa bb) (term-= aa bb)) (terms a) (terms b)))))
+       (term-= (name a) (name b))
+       (every #'term-= (terms a) (terms b))))

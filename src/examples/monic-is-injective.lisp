@@ -8,14 +8,14 @@
            :monic->injective))
 (in-package :claudia/examples/monic-is-injective)
 
-(def-predicate == 2)
+(def-const ==)
 (def-const ->) ;; ((-> x) _) => x
 
 
 (def-theorem injective->monic
-    (→ (∀ x (∀ y (→ (== (func f x) (func f y)) (== x y))))
-       (∀ g (∀ h (→ (∀ z (== (func f (func g z)) (func f (func h z))))
-                    (∀ z (== (func g z) (func h z)))))))
+    (→ (∀ x (∀ y (→ (predicate == (func f x) (func f y)) (predicate == x y))))
+       (∀ g (∀ h (→ (∀ z (predicate == (func f (func g z)) (func f (func h z))))
+                    (∀ z (predicate == (func g z) (func h z)))))))
     (:vars (x y f z g h))
   (to-r)
   (forall-r)
@@ -30,9 +30,9 @@
   (id))
 
 (def-theorem monic->injective
-    (→ (∀ g (∀ h (→ (∀ z (== (func f (func g z)) (func f (func h z))))
-                    (∀ z (== (func g z) (func h z))))))
-       (∀ x (∀ y (→ (== (func f x) (func f y)) (== x y)))))
+    (→ (∀ g (∀ h (→ (∀ z (predicate == (func f (func g z)) (func f (func h z))))
+                    (∀ z (predicate == (func g z) (func h z))))))
+       (∀ x (∀ y (→ (predicate == (func f x) (func f y)) (predicate == x y)))))
     (:vars (x y f g h z))
   ;; WIP) just memo, it is not proof 
   (to-r)

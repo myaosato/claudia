@@ -10,8 +10,7 @@
   (:import-from :claudia/term
                 :var :const :func)
   (:import-from :claudia/formula
-                :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
-                :prop)
+                :∧ :∨ :¬ :→ :∀ :∃ :predicate :prop)
   (:import-from :claudia/sequent
                 :sequent)
   (:import-from :claudia/goal
@@ -32,7 +31,7 @@
            :pl :pr
            :props :vars
            ;; formula
-           :∧ :∨ :¬ :→ :∀ :∃ :def-predicate
+           :∧ :∨ :¬ :→ :∀ :∃ :predicate
            ;; term
            :func :const
            ;; environment

@@ -9,7 +9,7 @@
 
 (def-theorem specialization (→ (∀ x (p x)) (∃ x (p x)))
   (:vars (x))
-  (to-r 0)
-  (forall-l 0 x)
-  (exists-r 0 x)
-  (id 0))
+  (to-r)
+  (forall-l x)
+  (exists-r x)
+  (id))

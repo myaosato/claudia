@@ -78,70 +78,70 @@
      t))
 
 ;; api comannd
-(defun id (n)
+(defun id (&optional (n 0))
   (with-environment claudia/command:id n))
 
-(defun cut (n formula)
+(defun cut (formula &optional (n 0))
   (with-environment claudia/command:cut n formula))
 
-(defun and-l1 (n &optional (m 0))
+(defun and-l1 (&optional (n 0) (m 0))
   (with-environment claudia/command:and-l1 n m))
 
-(defun and-l2 (n &optional (m 0))
+(defun and-l2 (&optional (n 0) (m 0))
   (with-environment claudia/command:and-l2 n m))
 
-(defun and-r (n &optional (m 0))
+(defun and-r (&optional (n 0) (m 0))
   (with-environment claudia/command:and-r n m))
 
-(defun or-l (n &optional (m 0))
+(defun or-l (&optional (n 0) (m 0))
   (with-environment claudia/command:or-l n m))
 
-(defun or-r1 (n &optional (m 0))
+(defun or-r1 (&optional (n 0) (m 0))
   (with-environment claudia/command:or-r1 n m))
 
-(defun or-r2 (n &optional (m 0))
+(defun or-r2 (&optional (n 0) (m 0))
   (with-environment claudia/command:or-r2 n m))
 
-(defun not-l (n &optional (m 0))
+(defun not-l (&optional (n 0) (m 0))
   (with-environment claudia/command:not-l n m))
 
-(defun not-r (n &optional (m 0))
+(defun not-r (&optional (n 0) (m 0))
   (with-environment claudia/command:not-r n m))
 
-(defun to-l (n &optional (m 0))
+(defun to-l (&optional (n 0) (m 0))
   (with-environment claudia/command:to-l n m))
 
-(defun to-r (n &optional (m 0))
+(defun to-r (&optional (n 0) (m 0))
   (with-environment claudia/command:to-r n m))
 
-(defun forall-l (n term &optional (m 0))
+(defun forall-l (term &optional (n 0) (m 0))
   (with-environment claudia/command:forall-l n term m))
 
-(defun forall-r (n &optional (m 0))
+(defun forall-r (&optional (n 0) (m 0))
   (with-environment claudia/command:forall-r n m))
 
-(defun exists-l (n &optional (m 0))
+(defun exists-l (&optional (n 0) (m 0))
   (with-environment claudia/command:exists-l n m))
 
-(defun exists-r (n term &optional (m 0))
+(defun exists-r (term &optional (n 0) (m 0))
   (with-environment claudia/command:exists-r n term m))
 
-(defun wl (n &optional (m 0))
+(defun wl (&optional (n 0) (m 0))
   (with-environment claudia/command:wl n m))
 
-(defun wr (n &optional (m 0))
+(defun wr (&optional (n 0) (m 0))
   (with-environment claudia/command:wr n m))
 
-(defun cl (n &optional (m 0))
+(defun cl (&optional (n 0) (m 0))
   (with-environment claudia/command:cl n m))
 
-(defun cr (n &optional (m 0))
+(defun cr (&optional (n 0) (m 0))
   (with-environment claudia/command:cr n m))
 
-(defun pl (n m l)
+(defun pl (&optional (n 0) (m 0) (l 1))
   (with-environment claudia/command:pl n m l))
 
-(defun pr (n m l)
+(defun pr (&optional (n 0) (m 0) (l 1))
   (with-environment claudia/command:pr n m l))
 
 ;; api helper

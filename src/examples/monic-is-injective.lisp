@@ -14,7 +14,7 @@
 
 
 (def-theorem injective->monic
-    (→ (∀ x (∀ y (→ (== (app f x) (app f y))  (== x y))))
+    (→ (∀ x (∀ y (→ (== (app f x) (app f y)) (== x y))))
        (∀ g (∀ h (→ (∀ z (== (app f (app g z)) (app f (app h z))))
                     (∀ z (== (app g z) (app h z)))))))
     (:vars (x y f z g h))

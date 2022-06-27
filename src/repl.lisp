@@ -1,4 +1,4 @@
-(defpackage :claudia/api
+(defpackage :claudia/repl
   (:use :cl)
   (:import-from :claudia/theorem)
   (:import-from :claudia/environment
@@ -36,7 +36,7 @@
            :func :const
            ;; environment
            :reset-claudia-environment))
-(in-package :claudia/api)
+(in-package :claudia/repl)
 
 (defmacro def-prop (sym)
   `(progn

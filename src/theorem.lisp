@@ -2,7 +2,7 @@
   (:use :cl
         :claudia/environment
         :claudia/command)
-  (:import-from :claudia/term
+  (:import-from :claudia/meta-data/term
                 :var :const :func)
   (:import-from :claudia/formula
                 :∧ :∨ :¬ :→ :∀ :∃ :prop :predicate)

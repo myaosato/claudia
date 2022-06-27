@@ -1,8 +1,8 @@
 (defpackage :claudia/formula
   (:use :cl
-        :claudia/term
+        :claudia/meta-data/term
         :claudia/pprint)
-  (:shadowing-import-from :claudia/term
+  (:shadowing-import-from :claudia/meta-data/term
                           :substitute
                           :substitutable)
   (:export :formula :formula-list :free-p :formula-=

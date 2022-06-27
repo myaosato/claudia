@@ -1,11 +1,11 @@
-(defpackage :claudia/term
+(defpackage :claudia/meta-data/term
   (:use :cl
         :claudia/pprint)
   (:shadow :substitute)
   (:export :term :free-vars :term-=
            :var :const :func           
            :term-list))
-(in-package :claudia/term)
+(in-package :claudia/meta-data/term)
 
 ;; ****************************************************************
 ;; meta data type

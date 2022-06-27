@@ -1,7 +1,7 @@
 (defpackage :claudia/examples/first-order-logic
   (:nicknames :claudia/examples/fol)
   (:use :cl
-        :claudia/theorem)
+        :claudia/api/theorem)
   (:export :specialization))
 (in-package :claudia/examples/first-order-logic)
 

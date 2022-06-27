@@ -1,7 +1,7 @@
 (defpackage :claudia/examples/classical-propositional-logic
   (:nicknames :claudia/examples/cpl)
   (:use :cl
-        :claudia/theorem
+        :claudia/api/theorem
         :claudia/command)
   (:export :law-of-exclded-middle
            :material-implication

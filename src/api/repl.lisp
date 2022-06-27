@@ -1,6 +1,6 @@
-(defpackage :claudia/repl
+(defpackage :claudia/api/repl
   (:use :cl)
-  (:import-from :claudia/theorem)
+  (:import-from :claudia/api/theorem)
   (:import-from :claudia/environment
                 :history
                 :current-goal
@@ -36,7 +36,7 @@
            :func :const
            ;; environment
            :reset-claudia-environment))
-(in-package :claudia/repl)
+(in-package :claudia/api/repl)
 
 (defmacro def-prop (sym)
   `(progn
@@ -165,12 +165,12 @@
 (defmacro export-proof (&optional (name (gensym "RANDOM-NAME-")) (package-name 'claudia/make-theorem))
   (let ((current-package-name (package-name *package*)))
     (unless (find-package package-name)
-      (make-package package-name :use (list :cl :claudia/theorem)))
+      (make-package package-name :use (list :cl :claudia/api/theorem)))
     `(progn
        (in-package ,package-name)
        (import ',(mapcar #'car claudia/environment:props))
        (import ',(mapcar #'car claudia/environment:vars))
-       (format t "~S~%" `(claudia/theorem:def-theorem ,',name ,claudia/environment:current-theorem
+       (format t "~S~%" `(claudia/api/theorem:def-theorem ,',name ,claudia/environment:current-theorem
                              (:props ,(mapcar #'car claudia/environment:props)
                               :vars ,(mapcar #'car claudia/environment:vars))
                            ,@(mapcar #'car (cdr (reverse claudia/environment:history)))))

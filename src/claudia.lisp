@@ -1,7 +1,7 @@
 (defpackage :claudia/claudia
   (:use :cl)
-  (:import-from :claudia/theorem)
-  (:import-from :claudia/repl)
+  (:import-from :claudia/api/theorem)
+  (:import-from :claudia/api/repl)
   (:import-from :claudia/examples/classical-propositional-logic)
   (:import-from :claudia/examples/first-order-logic)
   (:import-from :claudia/examples/monic-is-injective))

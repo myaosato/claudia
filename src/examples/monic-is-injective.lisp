@@ -1,6 +1,6 @@
 (defpackage :claudia/examples/monic-is-injective
   (:use :cl
-        :claudia/theorem)
+        :claudia/api/theorem)
   (:export :app
            :==
            :->

@@ -1,4 +1,4 @@
-(defpackage :claudia/theorem
+(defpackage :claudia/api/theorem
   (:use :cl
         :claudia/environment
         :claudia/command)
@@ -29,7 +29,7 @@
            :∧ :∨ :¬ :→ :∀ :∃ :predicate
            ;; term
            :func))
-(in-package :claudia/theorem)
+(in-package :claudia/api/theorem)
 
 ;; ****************************************************************
 ;; theorem (printer)

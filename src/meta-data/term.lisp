@@ -3,7 +3,7 @@
         :claudia/pprint)
   (:shadow :substitute)
   (:export :term :free-vars :term-=
-           :var :const :func           
+           :var :const :func
            :term-list))
 (in-package :claudia/meta-data/term)
 
@@ -74,22 +74,18 @@
 
 ;; func
 (defclass func (term)
-  ((name :initarg :name :reader name)
-   (terms :initarg :terms :reader terms :type term-list)))
-(defun func (name &rest terms)
-  (make-instance 'func :name name :terms terms))
+  ((terms :initarg :terms :reader terms :type term-list)))
+(defun func (&rest terms)
+  (make-instance 'func :terms terms))
 (defmethod initialize-instance :after ((term func) &key)
-  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (terms term))
-                                  :initial-value (free-vars (name term)))))
+  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (terms term)))))
 (defmethod print-object ((term func) stream)
-  (format stream "(~A ~A ~{~A~^ ~})" 'func (name term) (terms term)))
+  (format stream "(~A ~{~A~^ ~})" 'func (terms term)))
 (defmethod pprint-term ((term func) stream)
-  (format stream "~W(~{~:W~^, ~})" (name term) (terms term)))
+  (format stream "(~{~:W~^ ~})" (terms term)))
 (defmethod substitute ((place func) (var var) (term term))
   (apply #'func
-         (substitute (name place) var term)
          (mapcar (lambda (x) (substitute x var term)) (terms place))))
 (defmethod term-= ((a func) (b term))
   (and (typep b 'func)
-       (term-= (name a) (name b))
        (every #'term-= (terms a) (terms b))))

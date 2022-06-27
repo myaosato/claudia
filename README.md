@@ -5,7 +5,7 @@ proof assistant ?
 ## example (on repl style)
 
 ```console
-CL-USER> (use-package :claudia/repl)
+CL-USER> (use-package :claudia/api/repl)
 T
 CL-USER> (start-proof (→ (→ (→ a b) a) a) :props (a b))
 PROP: A: #<Prop: A>

@@ -102,7 +102,7 @@
 (defmethod print-object ((formula ¬) stream)
   (format stream "(~A ~A)" '¬ (¬-1 formula)))
 (defmethod pprint-formula ((formula ¬) stream)
-  (format stream "¬~:W" (pprint-formula (¬-1 formula) nil)))
+  (format stream "¬~:W" (¬-1 formula)))
 (defmethod initialize-instance :after ((formula ¬) &key)
   (setf (%free-vars formula) (free-vars (¬-1 formula))))
 (defmethod substitute ((place ¬) (var var) (term term))

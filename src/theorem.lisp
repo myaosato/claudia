@@ -16,8 +16,8 @@
            :def-const
            ;; command
            :id :cut
-           :and-l1 :and-l2 :and-r
-           :or-l :or-r1 :or-r2
+           :and-l :and-r
+           :or-l :or-r
            :not-l :not-r
            :to-l :to-r
            :forall-l :forall-r

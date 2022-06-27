@@ -4,8 +4,7 @@
         :claudia/theorem
         :claudia/command)
   (:export :law-of-exclded-middle
-           :material-implication-1
-           :material-implication-2
+           :material-implication
            :|Perice's law|))
 (in-package :claudia/examples/classical-propositional-logic)
 
@@ -15,32 +14,23 @@
 ;; ****************************************************************
 (def-theorem law-of-exclded-middle (∨ a (¬ a))
   (:props (a))
-  (cr)
-  (or-r1)
-  (or-r2 0 1)
+  (or-r)
   (not-r 0 1)
   (id))
 
 ;; ****************************************************************
-;; ex. material implication 1
+;; ex. material implication
 ;; A → B ⊢ ¬A ∨ B
 ;; ****************************************************************
-(def-theorem material-implication-1 (→ (→ A B) (∨ (¬ a) b))
+(def-theorem material-implication (∧ (→ (→ A B) (∨ (¬ a) b)) (→ (∨ (¬ a) b) (→ A B)))
   (:props (a b))
+  (and-r)
   (to-r)
+  (or-r)
   (to-l)
-  (or-r1 0 1)
-  (or-r2 1)
   (not-r 0 1)
   (id)
-  (id))
-
-;; ****************************************************************
-;; ex. material implication 2
-;; ⊢ (¬A ∨ B) → (A → B)
-;; ****************************************************************
-(def-theorem material-implication-2 (→ (∨ (¬ a) b) (→ A B))
-  (:props (a b))
+  (id)
   (to-r)
   (to-r)
   (or-l 0 1)

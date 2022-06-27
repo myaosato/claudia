@@ -20,8 +20,8 @@
   (:export :start-proof :proof-hist :undo :export-proof
            :def-prop :def-var
            :id :cut
-           :and-l1 :and-l2 :and-r
-           :or-l :or-r1 :or-r2
+           :and-l :and-r
+           :or-l :or-r
            :not-l :not-r
            :to-l :to-r
            :forall-l :forall-r
@@ -84,10 +84,7 @@
   (with-environment claudia/command:cut n formula))
 
 (defun and-l1 (&optional (n 0) (m 0))
-  (with-environment claudia/command:and-l1 n m))
-
-(defun and-l2 (&optional (n 0) (m 0))
-  (with-environment claudia/command:and-l2 n m))
+  (with-environment claudia/command:and-l n m))
 
 (defun and-r (&optional (n 0) (m 0))
   (with-environment claudia/command:and-r n m))
@@ -95,11 +92,8 @@
 (defun or-l (&optional (n 0) (m 0))
   (with-environment claudia/command:or-l n m))
 
-(defun or-r1 (&optional (n 0) (m 0))
-  (with-environment claudia/command:or-r1 n m))
-
-(defun or-r2 (&optional (n 0) (m 0))
-  (with-environment claudia/command:or-r2 n m))
+(defun or-r (&optional (n 0) (m 0))
+  (with-environment claudia/command:or-r n m))
 
 (defun not-l (&optional (n 0) (m 0))
   (with-environment claudia/command:not-l n m))

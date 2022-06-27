@@ -4,8 +4,8 @@
         :claudia/goal)
   (:import-from :claudia/lk)
   (:export :id :cut
-           :and-l1 :and-l2 :and-r
-           :or-l :or-r1 :or-r2
+           :and-l :and-r
+           :or-l :or-r
            :not-l :not-r
            :to-l :to-r
            :forall-l :forall-r
@@ -22,11 +22,8 @@
 (defun cut (formula &optional (n 0))
   (app current-goal n #'claudia/lk:cut formula))
 
-(defun and-l1 (&optional (n 0) (m 0))
-  (app current-goal n #'claudia/lk:and-l1 m))
-
-(defun and-l2 (&optional (n 0) (m 0))
-  (app current-goal n #'claudia/lk:and-l2 m))
+(defun and-l (&optional (n 0) (m 0))
+  (app current-goal n #'claudia/lk:and-l m))
 
 (defun and-r (&optional (n 0) (m 0))
   (app current-goal n #'claudia/lk:and-r m))
@@ -34,11 +31,8 @@
 (defun or-l (&optional (n 0) (m 0))
   (app current-goal n #'claudia/lk:or-l m))
 
-(defun or-r1 (&optional (n 0) (m 0))
-  (app current-goal n #'claudia/lk:or-r1 m))
-
-(defun or-r2 (&optional (n 0) (m 0))
-  (app current-goal n #'claudia/lk:or-r2 m))
+(defun or-r (&optional (n 0) (m 0))
+  (app current-goal n #'claudia/lk:or-r m))
 
 (defun not-l (&optional (n 0) (m 0))
   (app current-goal n #'claudia/lk:not-l m))

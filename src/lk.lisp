@@ -1,8 +1,8 @@
 (defpackage :claudia/lk
   (:use :cl
-        :claudia/formula
+        :claudia/meta-data/formula
         :claudia/sequent)
-  (:shadowing-import-from :claudia/formula
+  (:shadowing-import-from :claudia/meta-data/formula
                           :substitute
                           :substitutable)
   (:export :id :cut

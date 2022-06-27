@@ -1,4 +1,4 @@
-(defpackage :claudia/formula
+(defpackage :claudia/meta-data/formula
   (:use :cl
         :claudia/meta-data/term
         :claudia/pprint)
@@ -13,7 +13,7 @@
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
            :prop :predicate))
-(in-package :claudia/formula)
+(in-package :claudia/meta-data/formula)
 
 ;; ****************************************************************
 ;; meta data type

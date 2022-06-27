@@ -9,7 +9,7 @@
   (:import-from :claudia/command)
   (:import-from :claudia/meta-data/term
                 :var :const :func)
-  (:import-from :claudia/formula
+  (:import-from :claudia/meta-data/formula
                 :∧ :∨ :¬ :→ :∀ :∃ :predicate :prop)
   (:import-from :claudia/sequent
                 :sequent)

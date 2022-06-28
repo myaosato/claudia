@@ -83,7 +83,7 @@
 (defun cut (formula &optional (n 0))
   (with-environment claudia/command:cut n formula))
 
-(defun and-l1 (&optional (n 0) (m 0))
+(defun and-l (&optional (n 0) (m 0))
   (with-environment claudia/command:and-l n m))
 
 (defun and-r (&optional (n 0) (m 0))

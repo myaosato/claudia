@@ -25,7 +25,7 @@
 (defmethod pprint-meta-data ((term const) stream)
   (format stream "~A" (const-name term)))
 (defmethod pprint-meta-data ((term func) stream)
-  (format stream "(~{~:W~^ ~})" (terms term)))
+  (format stream "(~{~:W~^ ~})" (func-terms term)))
 (defmethod pprint-meta-data ((formula ∧) stream)
   (format stream "(~:W ∧ ~:W)" (∧-1 formula) (∧-2 formula)))
 (defmethod pprint-meta-data ((formula ∨) stream)
@@ -41,7 +41,7 @@
 (defmethod pprint-meta-data ((formula prop) stream)
   (format stream "~A" (prop-name formula)))
 (defmethod pprint-meta-data ((formula predicate) stream)
-  (format stream "(~{~:W~^ ~})" (terms formula)))
+  (format stream "(~{~:W~^ ~})" (predicate-terms formula)))
 
 (def-claudia-print (sequent) (seq stream)
   (format stream "~{~:W~^, ~}  ⊢  ~{~:W~^, ~}" (l seq) (r seq)))

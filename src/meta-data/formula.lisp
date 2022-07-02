@@ -10,7 +10,7 @@
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
            :prop :prop-name
-           :predicate :terms))
+           :predicate :predicate-terms))
 (in-package :claudia/meta-data/formula)
 
 ;; ****************************************************************
@@ -158,16 +158,16 @@
 
 ;; predicate
 (defclass predicate (atomic)
-  ((terms :initarg :terms :reader terms :type term-list)))
+  ((terms :initarg :terms :reader predicate-terms :type term-list)))
 (defmethod initialize-instance :after ((formula predicate) &key)
   (setf (%free-vars formula) (reduce #'union
-                                     (mapcar #'free-vars (terms formula)))))
+                                     (mapcar #'free-vars (predicate-terms formula)))))
 (defun predicate (&rest terms)
   (make-instance 'predicate :terms terms))
 (defmethod <- ((place predicate) (var var) (term term))
   (apply #'predicate
-         (mapcar (lambda (x) (<- x var term)) (terms place))))
+         (mapcar (lambda (x) (<- x var term)) (predicate-terms place))))
 (defmethod == ((a predicate) (b meta-data))
   (and (typep b 'predicate)
-       (every #'== (terms a) (terms b))))
+       (every #'== (predicate-terms a) (predicate-terms b))))
 

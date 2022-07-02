@@ -4,7 +4,7 @@
   (:export :term :term-list
            :var :var-name
            :const :const-name
-           :func :terms))
+           :func :func-terms))
 (in-package :claudia/meta-data/term)
 
 ;; ****************************************************************
@@ -50,17 +50,17 @@
 
 ;; func
 (defclass func (term)
-  ((terms :initarg :terms :reader terms :type term-list)))
+  ((terms :initarg :terms :reader func-terms :type term-list)))
 (defun func (&rest terms)
   (make-instance 'func :terms terms))
 (defmethod initialize-instance :after ((term func) &key)
-  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (terms term)))))
+  (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (func-terms term)))))
 (defmethod <- ((place func) (var var) (term term))
   (apply #'func
-         (mapcar (lambda (x) (<- x var term)) (terms place))))
+         (mapcar (lambda (x) (<- x var term)) (func-terms place))))
 (defmethod == ((a func) (b meta-data))
   (and (typep b 'func)
-       (every #'== (terms a) (terms b))))
+       (every #'== (func-terms a) (func-terms b))))
 
 ;; term is substitutable
 (defmethod <-able ((place term) (var var) (term term))

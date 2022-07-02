@@ -4,7 +4,8 @@
         :claudia/command)
   (:import-from :claudia/meta-data/interface
                 :var :const :func
-                :∧ :∨ :¬ :→ :∀ :∃ :prop :predicate)
+                :∧ :∨ :¬ :→ :∀ :∃ :prop :predicate
+                :formulas :terms)
   (:import-from :claudia/sequent
                 :sequent)
   (:import-from :claudia/goal
@@ -24,10 +25,10 @@
            :wl :wr
            :cl :cr
            :pl :pr
-           ;; formula
+           ;; meta-data
            :∧ :∨ :¬ :→ :∀ :∃ :predicate
-           ;; term
-           :func))
+           :func
+           :formulas :terms))
 (in-package :claudia/api/theorem)
 
 ;; ****************************************************************
@@ -43,7 +44,7 @@
      (let (,@(mapcar (lambda (sym) (list sym `(prop ',sym))) props)
            ,@(mapcar (lambda (sym) (list sym `(var ',sym))) vars))
        (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-         (with-current-goal (goal (sequent nil (list ,theorem)))
+         (with-current-goal (goal (sequent nil (list (formulas ,theorem))))
            (format t "~16,,,'-A [GOAL]~%" "")
            (format t "~W~%" current-goal)
            ,@(mapcar (lambda (command)

@@ -7,7 +7,7 @@
 
 (def-const p)
 
-(def-theorem specialization (→ (∀ x (predicate p x)) (∃ x (predicate p x)))
+(def-theorem specialization (→ (∀ x (p x)) (∃ x (p x)))
   (:vars (x))
   (to-r)
   (forall-l x)

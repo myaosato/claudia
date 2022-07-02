@@ -15,7 +15,6 @@
            :pl :pr))
 (in-package :claudia/command)
 
-
 (defun id (&optional (n 0))
   (app current-goal n #'claudia/lk:id))
 

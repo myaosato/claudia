@@ -1,10 +1,11 @@
 (defpackage :claudia/goal
-  (:use :cl
-        :claudia/pprint)
+  (:use :cl)
   (:import-from :claudia/sequent
                 :sequent
                 :sequent-list)
   (:export :goal
+           :completed-p
+           :sequents
            :app))
 (in-package :claudia/goal)
 
@@ -17,15 +18,7 @@
   (make-instance 'goal :sequents sequents))
 (defun completed-p (goal)
   (null (sequents goal)))
-(def-claudia-print (goal) (goal stream)
-  (if (completed-p goal)
-      (format stream "Complete !!")
-      (format stream "~{[~A]: ~W~^~%~}" (loop :for seq :in (sequents goal)
-                                              :for n :from 0
-                                              :append (list n seq)))))
-(defmethod print-object ((goal goal) stream)
-  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-    (format stream "#<GOAL: ~W >" goal)))
+
 
 (defun nth-seq (n goal)
   (nth n (sequents goal)))

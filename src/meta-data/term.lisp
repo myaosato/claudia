@@ -1,9 +1,10 @@
 (defpackage :claudia/meta-data/term
   (:use :cl
-        :claudia/meta-data/meta-data
-        :claudia/pprint)
+        :claudia/meta-data/meta-data)
   (:export :term :term-list
-           :var :const :func))
+           :var :var-name
+           :const :const-name
+           :func :terms))
 (in-package :claudia/meta-data/term)
 
 ;; ****************************************************************
@@ -23,7 +24,7 @@
 
 ;; var
 (defclass var (term)
-  ((name :initarg :name :reader name)))
+  ((name :initarg :name :reader var-name)))
 (defmethod initialize-instance :after ((term var) &key)
   (setf (%free-vars term) (list term)))
 (defun var (name)
@@ -38,7 +39,7 @@
 
 ;; const
 (defclass const (term)
-  ((name :initarg :name :reader name)))
+  ((name :initarg :name :reader const-name)))
 (defun const (name)
   (make-instance 'const :name name))
 (defmethod <- ((place const) (var var) (term term))
@@ -71,20 +72,9 @@
 (defmethod print-object ((term term) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of term)))
-(defmethod pprint-term ((term term) stream)
-  (declare (ignore stream))
-  (error "pprint-term method for type ~A is not defined" (type-of term)))
-(def-claudia-print (term) (term stream)
-  (pprint-term term stream))
 (defmethod print-object ((term var) stream)
-  (format stream "~A" (name term)))
-(defmethod pprint-term ((term var) stream)
   (format stream "~A" (name term)))
 (defmethod print-object ((term  const) stream)
     (format stream "~A" (name term)))
-(defmethod pprint-term ((term const) stream)
-  (format stream "~A" (name term)))
 (defmethod print-object ((term func) stream)
   (format stream "(~A ~{~A~^ ~})" 'func (terms term)))
-(defmethod pprint-term ((term func) stream)
-  (format stream "(~{~:W~^ ~})" (terms term)))

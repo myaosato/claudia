@@ -1,7 +1,6 @@
 (defpackage :claudia/sequent
   (:use :cl
-        :claudia/meta-data/interface
-        :claudia/pprint)
+        :claudia/meta-data/interface)
   (:export :sequent :sequent-list
            :l :r
            :length-l :length-r
@@ -25,9 +24,6 @@
        (every (lambda (x) (typep x 'sequent)) thing)))
 (deftype sequent-list ()
   `(satisfies sequent-list-p))
-(defmethod print-object ((seq sequent) stream)
-  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-    (format stream "#<SEQUENT: ~{~:W~^, ~}  ⊢  ~{~:W~^, ~} >" (l seq) (r seq))))
 
 (defun length-l (seq)
   (length (l seq)))
@@ -54,5 +50,3 @@
 (defun replace-nth-r (n formula-list seq)
   (append (subseq (r seq) 0 n) formula-list (subseq (r seq) (1+ n))))
 
-(def-claudia-print (sequent) (seq stream)
-  (format stream "~{~:W~^, ~}  ⊢  ~{~:W~^, ~}" (l seq) (r seq)))

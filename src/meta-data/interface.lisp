@@ -6,7 +6,9 @@
   (:export :meta-data
            :== :<- :<-able :free-p
            :term :term-list
-           :var :const :func
+           :var :var-name
+           :const :const-name
+           :func :terms
            :formula :formula-list
            :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
@@ -14,5 +16,6 @@
            :→ :→-1 :→-2
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
-           :prop :predicate))
+           :prop :prop-name
+           :predicate))
 (in-package :claudia/meta-data/interface)

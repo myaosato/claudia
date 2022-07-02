@@ -1,8 +1,7 @@
 (defpackage :claudia/meta-data/formula
   (:use :cl
         :claudia/meta-data/meta-data
-        :claudia/meta-data/term
-        :claudia/pprint)
+        :claudia/meta-data/term)
   (:export :formula :formula-list
            :∧ :∧-1 :∧-2
            :∨ :∨-1 :∨-2
@@ -10,7 +9,8 @@
            :→ :→-1 :→-2
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
-           :prop :predicate))
+           :prop :prop-name
+           :predicate :terms))
 (in-package :claudia/meta-data/formula)
 
 ;; ****************************************************************
@@ -147,7 +147,7 @@
 
 ;; prop
 (defclass prop (atomic)
-  ((name :initarg :name :reader name)))
+  ((name :initarg :name :reader prop-name)))
 (defun prop (name)
   (make-instance 'prop :name name))
 (defmethod <- ((place prop) (var var) (term term))
@@ -158,73 +158,37 @@
 
 ;; predicate
 (defclass predicate (atomic)
-  ((name :initarg :name :reader name)
-   (terms :initarg :terms :reader terms :type term-list)))
+  ((terms :initarg :terms :reader terms :type term-list)))
 (defmethod initialize-instance :after ((formula predicate) &key)
   (setf (%free-vars formula) (reduce #'union
-                                     (mapcar #'free-vars (terms formula))
-                                     :initial-value (free-vars (name formula)))))
-(defun predicate (name &rest terms)
-  (make-instance 'predicate :name name :terms terms))
+                                     (mapcar #'free-vars (terms formula)))))
+(defun predicate (&rest terms)
+  (make-instance 'predicate :terms terms))
 (defmethod <- ((place predicate) (var var) (term term))
   (apply #'predicate
-         (<- (name place) var term)
          (mapcar (lambda (x) (<- x var term)) (terms place))))
 (defmethod == ((a predicate) (b meta-data))
   (and (typep b 'predicate)
-       (== (name a) (name b))
        (every #'== (terms a) (terms b))))
-
 
 
 ;; ------------------------
 (defmethod print-object ((formula formula) stream)
   (declare (ignore stream))
   (error "print-object method for type ~A is not defined" (type-of formula)))
-(defmethod pprint-formula ((formula formula) stream)
-  (declare (ignore stream))
-  (error "pprint-formula method for type ~A is not defined" (type-of formula)))
-(def-claudia-print (formula) (formula stream)
-  (pprint-formula formula stream))
-
 (defmethod print-object ((formula ∧) stream)
   (format stream "(~A ~A ~A)" '∧ (∧-1 formula) (∧-2 formula)))
-(defmethod pprint-formula ((formula ∧) stream)
-  (format stream "(~:W ∧ ~:W)" (∧-1 formula) (∧-2 formula)))
-
 (defmethod print-object ((formula ∨) stream)
   (format stream "(~A ~A ~A)" '∨ (∨-1 formula) (∨-2 formula)))
-(defmethod pprint-formula ((formula ∨) stream)
-  (format stream "(~:W ∨ ~:W)" (∨-1 formula) (∨-2 formula)))
-
 (defmethod print-object ((formula ¬) stream)
   (format stream "(~A ~A)" '¬ (¬-1 formula)))
-(defmethod pprint-formula ((formula ¬) stream)
-  (format stream "¬~:W" (¬-1 formula)))
-
 (defmethod print-object ((formula →) stream)
   (format stream "(~A ~A ~A)" '→ (→-1 formula) (→-2 formula)))
-(defmethod pprint-formula ((formula →) stream)
-  (format stream "(~:W → ~:W)" (→-1 formula) (→-2 formula)))
-
 (defmethod print-object ((formula ∀) stream)
   (format stream "(~A ~A ~A)" '∀ (∀-var formula) (∀-formula formula)))
-(defmethod pprint-formula ((formula ∀) stream)
-  (format stream "∀~:W(~:W)" (∀-var formula) (∀-formula formula)))
-
 (defmethod print-object ((formula ∃) stream)
   (format stream "(~A ~A ~A)" '∃ (∃-var formula) (∃-formula formula)))
-(defmethod pprint-formula ((formula ∃) stream)
-  (format stream "∃~:W(~:W)" (∃-var formula) (∃-formula formula)))
-
 (defmethod print-object ((formula prop) stream)
   (format stream "#<Prop: ~A>" (name formula)))
-(defmethod pprint-formula ((formula prop) stream)
-  (format stream "~A" (name formula)))
-
 (defmethod print-object ((formula predicate) stream)
   (format stream "(~A ~A ~{~A~^ ~})" 'predicate (name formula) (terms formula)))
-(defmethod pprint-formula ((formula predicate) stream)
-  (if (= (length (terms formula)) 2) ;; ?
-      (format stream "(~:W ~:W ~:W)" (nth 0 (terms formula)) (name formula) (nth 1 (terms formula)))
-      (format stream "~:W(~{~:W~^ ~})" (name formula) (terms formula))))

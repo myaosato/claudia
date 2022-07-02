@@ -14,7 +14,7 @@
                 :sequent)
   (:import-from :claudia/goal
                 :goal)
-  (:import-from :claudia/pprint
+  (:import-from :claudia/print/pprint
                 :print-claudia-print-dispatch)
   (:export :start-proof :proof-hist :undo :export-proof
            :def-prop :def-var

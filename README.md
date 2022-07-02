@@ -2,7 +2,9 @@
 
 proof assistant ?
 
-## example (on repl style)
+## examples
+
+### example (on repl style)
 
 ```console
 CL-USER> (use-package :claudia/api/repl)
@@ -94,6 +96,7 @@ NIL
 CL-USER> 
 ```
 
-## example (writing code style)
+### example (writing code style)
 
 please check [examples](/src/examples)
+

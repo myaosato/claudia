@@ -13,27 +13,27 @@ PROP: B: #<Prop: B>
 ---------------- [GOAL]
 [0]:   ⊢  (((A → B) → A) → A)
 #<GOAL: [0]:   ⊢  (((A → B) → A) → A) >
-CL-USER> (to-r 0)
+CL-USER> (to-r)
 ---------------- [TO-R]
 [0]: ((A → B) → A)  ⊢  A
 #<GOAL: [0]: ((A → B) → A)  ⊢  A >
-CL-USER> (to-l 0)
+CL-USER> (to-l)
 ---------------- [TO-L]
 [0]:   ⊢  (A → B), A
 [1]: A  ⊢  A
 #<GOAL: [0]:   ⊢  (A → B), A
 [1]: A  ⊢  A >
-CL-USER> (to-r 0)
+CL-USER> (to-r)
 ---------------- [TO-R]
 [0]: A  ⊢  B, A
 [1]: A  ⊢  A
 #<GOAL: [0]: A  ⊢  B, A
 [1]: A  ⊢  A >
-CL-USER> (id 0)
+CL-USER> (id)
 ---------------- [ID]
 [0]: A  ⊢  A
 #<GOAL: [0]: A  ⊢  A >
-CL-USER> (id 0)
+CL-USER> (id)
 ---------------- [ID]
 Complete !!
 #<GOAL: Complete !! >
@@ -76,10 +76,6 @@ CL-USER> (undo)
 [1]: A  ⊢  A
 ---------------- [ID]
 [0]: A  ⊢  A
-POP: [
----------------- [ID]
-#<GOAL: Complete !! >
-]
 NIL
 CL-USER> (proof-hist)
 ---------------- [GOAL]

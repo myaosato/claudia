@@ -53,10 +53,3 @@
                                               :for n :from 0
                                               :append (list n seq)))))
 
-;; TODO move claudia/print/print-object
-(defmethod print-object ((seq sequent) stream)
-  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-    (format stream "#<SEQUENT: ~{~:W~^, ~}  ⊢  ~{~:W~^, ~} >" (l seq) (r seq))))
-(defmethod print-object ((goal goal) stream)
-  (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
-    (format stream "#<GOAL: ~W >" goal)))

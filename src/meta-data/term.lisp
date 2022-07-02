@@ -65,16 +65,3 @@
 ;; term is substitutable
 (defmethod <-able ((place term) (var var) (term term))
   t)
-
-
-;; ----------------------------------------
-
-(defmethod print-object ((term term) stream)
-  (declare (ignore stream))
-  (error "print-object method for type ~A is not defined" (type-of term)))
-(defmethod print-object ((term var) stream)
-  (format stream "~A" (name term)))
-(defmethod print-object ((term  const) stream)
-    (format stream "~A" (name term)))
-(defmethod print-object ((term func) stream)
-  (format stream "(~A ~{~A~^ ~})" 'func (terms term)))

@@ -9,7 +9,7 @@
                 :sequent)
   (:import-from :claudia/goal
                 :goal)
-  (:import-from :claudia/print/pprint
+  (:import-from :claudia/print/interface
                 :print-claudia-print-dispatch)
   (:export :def-theorem
            :def-const

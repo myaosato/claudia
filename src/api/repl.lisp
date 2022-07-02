@@ -7,9 +7,8 @@
                 :current-theorem
                 :reset-claudia-environment)
   (:import-from :claudia/command)
-  (:import-from :claudia/meta-data/term
-                :var :const :func)
-  (:import-from :claudia/meta-data/formula
+  (:import-from :claudia/meta-data/interface
+                :var :const :func
                 :∧ :∨ :¬ :→ :∀ :∃ :predicate :prop)
   (:import-from :claudia/sequent
                 :sequent)

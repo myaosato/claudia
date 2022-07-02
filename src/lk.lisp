@@ -1,10 +1,7 @@
 (defpackage :claudia/lk
   (:use :cl
-        :claudia/meta-data/formula
+        :claudia/meta-data/interface
         :claudia/sequent)
-  (:shadowing-import-from :claudia/meta-data/formula
-                          :substitute
-                          :substitutable)
   (:export :id :cut
            :and-l :and-r
            :or-l :or-r
@@ -34,7 +31,7 @@
 (defun id (seq)
   (if (and (> (length-l seq) 0)
            (> (length-r seq) 0)
-           (some (lambda (lf) (some (lambda (rf) (formula-= lf rf)) (r seq))) (l seq)))
+           (some (lambda (lf) (some (lambda (rf) (== lf rf)) (r seq))) (l seq)))
       nil ;; proved
       (error "")))
 
@@ -120,8 +117,8 @@
 (defun forall-l (seq term &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (and (typep focus '∀)
-             (substitutable (∀-formula focus) (∀-var focus) term))
-        (list (sequent (replace-nth-l n (list (substitute (∀-formula focus) (∀-var focus) term)) seq) (r seq)))
+             (<-able (∀-formula focus) (∀-var focus) term))
+        (list (sequent (replace-nth-l n (list (<- (∀-formula focus) (∀-var focus) term)) seq) (r seq)))
         (error "FORALL-L (~A) is not applicable to ~A" n seq))))
 
 (defun forall-r (seq &optional (n 0))
@@ -147,8 +144,8 @@
 (defun exists-r (seq term &optional (n 0))
   (let ((focus (nth-r n seq)))
     (if (and (typep focus '∃)
-             (substitutable (∃-formula focus) (∃-var focus) term))
-        (list (sequent (l seq) (replace-nth-r n (list (substitute (∃-formula focus) (∃-var focus) term)) seq)))
+             (<-able (∃-formula focus) (∃-var focus) term))
+        (list (sequent (l seq) (replace-nth-r n (list (<- (∃-formula focus) (∃-var focus) term)) seq)))
         (error "EXISTS-R (~A) is not applicable to ~A" n seq))))
 
 

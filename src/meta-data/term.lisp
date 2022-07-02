@@ -1,10 +1,9 @@
 (defpackage :claudia/meta-data/term
   (:use :cl
+        :claudia/meta-data/meta-data
         :claudia/pprint)
-  (:shadow :substitute)
-  (:export :term :free-vars :term-=
-           :var :const :func
-           :term-list))
+  (:export :term :term-list
+           :var :const :func))
 (in-package :claudia/meta-data/term)
 
 ;; ****************************************************************
@@ -14,22 +13,8 @@
 ;; term := const | var | func
 ;;
 ;; ****************************************************************
-(defclass term nil
-  ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
-(defmethod print-object ((term term) stream)
-  (declare (ignore stream))
-  (error "print-object method for type ~A is not defined" (type-of term)))
-(defmethod pprint-term ((term term) stream)
-  (declare (ignore stream))
-  (error "pprint-term method for type ~A is not defined" (type-of term)))
-(def-claudia-print (term) (term stream)
-  (pprint-term term stream))
-(defmethod substitute ((place term) var term)
-  (error "substitute method for type ~A is not defined" (type-of place)))
-(defmethod substitutable ((place term) var term)
-  (error "substitutable method for type ~A is not defined" (type-of place)))
-(defmethod term-= ((a term) (b term))
-  (error "term-= method for type ~A is not defined" (type-of a)))
+(defclass term (meta-data)
+  nil)
 (defun term-list-p (thing)
   (and (listp thing)
        (every (lambda (x) (typep x 'term)) thing)))
@@ -43,17 +28,11 @@
   (setf (%free-vars term) (list term)))
 (defun var (name)
   (make-instance 'var :name name))
-(defmethod print-object ((term var) stream)
-  (format stream "~A" (name term)))
-(defmethod pprint-term ((term var) stream)
-  (format stream "~A" (name term)))
-(defmethod substitute ((place var) (var var) (term term))
+(defmethod <- ((place var) (var var) (term term))
   (if (eq place var)
       term
       place))
-(defmethod substitutable ((place term) (var var) (term term))
-  t)
-(defmethod term-= ((a var) (b term))
+(defmethod == ((a var) (b meta-data))
   (and (typep b 'var)
        (eq a b)))
 
@@ -62,13 +41,9 @@
   ((name :initarg :name :reader name)))
 (defun const (name)
   (make-instance 'const :name name))
-(defmethod print-object ((term  const) stream)
-    (format stream "~A" (name term)))
-(defmethod pprint-term ((term const) stream)
-  (format stream "~A" (name term)))
-(defmethod substitute ((place const) (var var) (term term))
+(defmethod <- ((place const) (var var) (term term))
   place)
-(defmethod term-= ((a const) (b term))
+(defmethod == ((a const) (b meta-data))
   (and (typep b 'const)
        (eq a b)))
 
@@ -79,13 +54,37 @@
   (make-instance 'func :terms terms))
 (defmethod initialize-instance :after ((term func) &key)
   (setf (%free-vars term) (reduce #'union (mapcar #'free-vars (terms term)))))
+(defmethod <- ((place func) (var var) (term term))
+  (apply #'func
+         (mapcar (lambda (x) (<- x var term)) (terms place))))
+(defmethod == ((a func) (b meta-data))
+  (and (typep b 'func)
+       (every #'== (terms a) (terms b))))
+
+;; term is substitutable
+(defmethod <-able ((place term) (var var) (term term))
+  t)
+
+
+;; ----------------------------------------
+
+(defmethod print-object ((term term) stream)
+  (declare (ignore stream))
+  (error "print-object method for type ~A is not defined" (type-of term)))
+(defmethod pprint-term ((term term) stream)
+  (declare (ignore stream))
+  (error "pprint-term method for type ~A is not defined" (type-of term)))
+(def-claudia-print (term) (term stream)
+  (pprint-term term stream))
+(defmethod print-object ((term var) stream)
+  (format stream "~A" (name term)))
+(defmethod pprint-term ((term var) stream)
+  (format stream "~A" (name term)))
+(defmethod print-object ((term  const) stream)
+    (format stream "~A" (name term)))
+(defmethod pprint-term ((term const) stream)
+  (format stream "~A" (name term)))
 (defmethod print-object ((term func) stream)
   (format stream "(~A ~{~A~^ ~})" 'func (terms term)))
 (defmethod pprint-term ((term func) stream)
   (format stream "(~{~:W~^ ~})" (terms term)))
-(defmethod substitute ((place func) (var var) (term term))
-  (apply #'func
-         (mapcar (lambda (x) (substitute x var term)) (terms place))))
-(defmethod term-= ((a func) (b term))
-  (and (typep b 'func)
-       (every #'term-= (terms a) (terms b))))

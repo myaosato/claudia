@@ -1,8 +1,7 @@
 (defpackage :claudia/sequent
   (:use :cl
+        :claudia/meta-data/interface
         :claudia/pprint)
-  (:import-from :claudia/meta-data/formula
-                :formula-list)
   (:export :sequent :sequent-list
            :l :r
            :length-l :length-r

@@ -2,9 +2,8 @@
   (:use :cl
         :claudia/environment
         :claudia/command)
-  (:import-from :claudia/meta-data/term
-                :var :const :func)
-  (:import-from :claudia/meta-data/formula
+  (:import-from :claudia/meta-data/interface
+                :var :const :func
                 :∧ :∨ :¬ :→ :∀ :∃ :prop :predicate)
   (:import-from :claudia/sequent
                 :sequent)

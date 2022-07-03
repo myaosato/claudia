@@ -3,10 +3,10 @@
         :claudia/meta-data/meta-data
         :claudia/meta-data/term)
   (:export :formula :formula-list
-           :∧ :∧-1 :∧-2
-           :∨ :∨-1 :∨-2
-           :¬ :¬-1
-           :→ :→-1 :→-2
+           :∧ :∧-0 :∧-1
+           :∨ :∨-0 :∨-1
+           :¬ :¬-0
+           :→ :→-0 :→-1
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
            :prop :prop-name
@@ -32,69 +32,69 @@
 
 ;; ∧
 (defclass ∧ (formula)
-  ((∧-1 :initarg :∧-1 :reader ∧-1 :type formula)
-   (∧-2 :initarg :∧-2 :reader ∧-2 :type formula)))
+  ((∧-0 :initarg :∧-0 :reader ∧-0 :type formula)
+   (∧-1 :initarg :∧-1 :reader ∧-1 :type formula)))
 (defun ∧ (f1 f2)
-  (make-instance '∧ :∧-1 f1 :∧-2 f2))
+  (make-instance '∧ :∧-0 f1 :∧-1 f2))
 (defmethod initialize-instance :after ((formula ∧) &key)
-  (setf (%free-vars formula) (union (free-vars (∧-1 formula)) (free-vars (∧-2 formula)))))
+  (setf (%free-vars formula) (union (free-vars (∧-0 formula)) (free-vars (∧-1 formula)))))
 (defmethod <- ((place ∧) (var var) (term term))
-  (∧ (<- (∧-1 place) var term) (<- (∧-2 place) var term)))
+  (∧ (<- (∧-0 place) var term) (<- (∧-1 place) var term)))
 (defmethod <-able ((place ∧) (var var) (term term))
-  (and (<-able (∧-1 place) var term) (<-able (∧-2 place) var term)))
+  (and (<-able (∧-0 place) var term) (<-able (∧-1 place) var term)))
 (defmethod == ((a ∧) (b meta-data))
   (and (typep b '∧)
-       (== (∧-1 a) (∧-1 b))
-       (== (∧-2 a) (∧-2 b))))
+       (== (∧-0 a) (∧-0 b))
+       (== (∧-1 a) (∧-1 b))))
 
 ;; ∨
 (defclass ∨ (formula)
-  ((∨-1 :initarg :∨-1 :reader ∨-1 :type formula)
-   (∨-2 :initarg :∨-2 :reader ∨-2 :type formula)))
+  ((∨-0 :initarg :∨-0 :reader ∨-0 :type formula)
+   (∨-1 :initarg :∨-1 :reader ∨-1 :type formula)))
 (defun ∨ (f1 f2)
-  (make-instance '∨ :∨-1 f1 :∨-2 f2))
+  (make-instance '∨ :∨-0 f1 :∨-1 f2))
 (defmethod initialize-instance :after ((formula ∨) &key)
-  (setf (%free-vars formula) (union (free-vars (∨-1 formula)) (free-vars (∨-2 formula)))))
+  (setf (%free-vars formula) (union (free-vars (∨-0 formula)) (free-vars (∨-1 formula)))))
 (defmethod <- ((place ∨) (var var) (term term))
-  (∨ (<- (∨-1 place) var term) (<- (∨-2 place) var term)))
+  (∨ (<- (∨-0 place) var term) (<- (∨-1 place) var term)))
 (defmethod <-able ((place ∨) (var var) (term term))
-  (and (<-able (∨-1 place) var term) (<-able (∨-2 place) var term)))
+  (and (<-able (∨-0 place) var term) (<-able (∨-1 place) var term)))
 (defmethod == ((a ∨) (b meta-data))
   (and (typep b '∨)
-       (== (∨-1 a) (∨-1 b))
-       (== (∨-2 a) (∨-2 b))))
+       (== (∨-0 a) (∨-0 b))
+       (== (∨-1 a) (∨-1 b))))
 
 ;; ¬
 (defclass ¬ (formula)
-  ((¬-1 :initarg :¬-1 :reader ¬-1 :type formula)))
+  ((¬-0 :initarg :¬-0 :reader ¬-0 :type formula)))
 (defun ¬ (f)
-  (make-instance '¬ :¬-1 f))
+  (make-instance '¬ :¬-0 f))
 (defmethod initialize-instance :after ((formula ¬) &key)
-  (setf (%free-vars formula) (free-vars (¬-1 formula))))
+  (setf (%free-vars formula) (free-vars (¬-0 formula))))
 (defmethod <- ((place ¬) (var var) (term term))
-  (¬ (<- (¬-1 place) var term)))
+  (¬ (<- (¬-0 place) var term)))
 (defmethod <-able ((place ¬) (var var) (term term))
-  (<-able (¬-1 place) var term))
+  (<-able (¬-0 place) var term))
 (defmethod == ((a ¬) (b meta-data))
   (and (typep b '¬)
-       (== (¬-1 a) (¬-1 b))))
+       (== (¬-0 a) (¬-0 b))))
 
 ;; →
 (defclass → (formula)
-  ((→-1 :initarg :→-1 :reader →-1 :type formula)
-   (→-2 :initarg :→-2 :reader →-2 :type formula)))
+  ((→-0 :initarg :→-0 :reader →-0 :type formula)
+   (→-1 :initarg :→-1 :reader →-1 :type formula)))
 (defun → (f1 f2)
-  (make-instance '→ :→-1 f1 :→-2 f2))
+  (make-instance '→ :→-0 f1 :→-1 f2))
 (defmethod initialize-instance :after ((formula →) &key)
-  (setf (%free-vars formula) (union (free-vars (→-1 formula)) (free-vars (→-2 formula)))))
+  (setf (%free-vars formula) (union (free-vars (→-0 formula)) (free-vars (→-1 formula)))))
 (defmethod <- ((place →) (var var) (term term))
-  (→ (<- (→-1 place) var term) (<- (→-2 place) var term)))
+  (→ (<- (→-0 place) var term) (<- (→-1 place) var term)))
 (defmethod <-able ((place →) (var var) (term term))
-  (and (<-able (→-1 place) var term) (<-able (→-2 place) var term)))
+  (and (<-able (→-0 place) var term) (<-able (→-1 place) var term)))
 (defmethod == ((a →) (b meta-data))
   (and (typep b '→)
-       (== (→-1 a) (→-1 b))
-       (== (→-2 a) (→-2 b))))
+       (== (→-0 a) (→-0 b))
+       (== (→-1 a) (→-1 b))))
 
 ;; ∀
 (defclass ∀ (formula)

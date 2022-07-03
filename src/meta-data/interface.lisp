@@ -11,10 +11,10 @@
            :const :const-name
            :func :func-terms
            :formula :formula-list
-           :∧ :∧-1 :∧-2
-           :∨ :∨-1 :∨-2
-           :¬ :¬-1
-           :→ :→-1 :→-2
+           :∧ :∧-0 :∧-1
+           :∨ :∨-0 :∨-1
+           :¬ :¬-0
+           :→ :→-0 :→-1
            :∀ :∀-var :∀-formula
            :∃ :∃-var :∃-formula
            :prop :prop-name

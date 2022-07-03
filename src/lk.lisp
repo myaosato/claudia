@@ -50,14 +50,14 @@
 (defun and-l (seq &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (typep focus '∧)
-        (list (sequent (replace-nth-l n (list (∧-1 focus) (∧-2 focus)) seq) (r seq)))
+        (list (sequent (replace-nth-l n (list (∧-0 focus) (∧-1 focus)) seq) (r seq)))
         (error "AND-L (~A) is not applicable to ~A" n seq))))
 
 (defun and-r (seq &optional (n 0))
   (let ((focus (nth-r n seq)))
     (if (typep focus '∧)
-        (list (sequent (l seq) (replace-nth-r n (list (∧-1 focus)) seq))
-              (sequent (l seq) (replace-nth-r n (list (∧-2 focus)) seq)))
+        (list (sequent (l seq) (replace-nth-r n (list (∧-0 focus)) seq))
+              (sequent (l seq) (replace-nth-r n (list (∧-1 focus)) seq)))
         (error "AND-R (~A) is not applicable to ~A" n seq))))
 
 ;; Or
@@ -67,14 +67,14 @@
 (defun or-r (seq &optional (n 0))
   (let ((focus (nth-r n seq)))
     (if (typep focus '∨)
-        (list (sequent (l seq) (replace-nth-r n (list (∨-1 focus) (∨-2 focus)) seq)))
+        (list (sequent (l seq) (replace-nth-r n (list (∨-0 focus) (∨-1 focus)) seq)))
         (error "OR-R (~A) is not applicable to ~A" n seq))))
 
 (defun or-l (seq &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (typep focus '∨)
-        (list (sequent (replace-nth-l n (list (∨-1 focus)) seq) (r seq))
-              (sequent (replace-nth-l n (list (∨-2 focus)) seq) (r seq)))
+        (list (sequent (replace-nth-l n (list (∨-0 focus)) seq) (r seq))
+              (sequent (replace-nth-l n (list (∨-1 focus)) seq) (r seq)))
         (error "OR-L (~A) is not applicable to ~A" n seq))))
 
 ;; Not
@@ -84,13 +84,13 @@
 (defun not-l (seq &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (typep focus '¬)
-        (list (sequent (remove-nth-l n seq) (cons (¬-1 focus) (r seq))))
+        (list (sequent (remove-nth-l n seq) (cons (¬-0 focus) (r seq))))
         (error "NOT-L (~A) is not applicable to ~A" n seq))))
 
 (defun not-r (seq &optional (n 0))
   (let ((focus (nth-r n seq)))
     (if (typep focus '¬)
-        (list (sequent (cons (¬-1 focus) (l seq)) (remove-nth-r n seq)))
+        (list (sequent (cons (¬-0 focus) (l seq)) (remove-nth-r n seq)))
         (error "NOT-R (~A) is not applicable to ~A" n seq))))
 
 ;; To
@@ -100,14 +100,14 @@
 (defun to-r (seq &optional (n 0))
   (let ((focus (nth-r n seq)))
     (if (typep focus '→)
-        (list (sequent (cons (→-1 focus) (l seq)) (replace-nth-r n (list (→-2 focus)) seq)))
+        (list (sequent (cons (→-0 focus) (l seq)) (replace-nth-r n (list (→-1 focus)) seq)))
         (error "TO-R (~A) is not applicable to ~A" n seq))))
 
 (defun to-l (seq &optional (n 0))
   (let ((focus (nth-l n seq)))
     (if (typep focus '→)
-        (list (sequent (remove-nth-l n seq) (cons (→-1 focus) (r seq)))
-              (sequent (replace-nth-l n (list (→-2 focus)) seq) (r seq)))
+        (list (sequent (remove-nth-l n seq) (cons (→-0 focus) (r seq)))
+              (sequent (replace-nth-l n (list (→-1 focus)) seq) (r seq)))
         (error "TO-L (~A) is not applicable to ~A" n seq))))
 
 ;; For all

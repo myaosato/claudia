@@ -49,4 +49,3 @@
   (append (subseq (l seq) 0 n) formula-list (subseq (l seq) (1+ n))))
 (defun replace-nth-r (n formula-list seq)
   (append (subseq (r seq) 0 n) formula-list (subseq (r seq) (1+ n))))
-

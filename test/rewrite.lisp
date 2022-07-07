@@ -16,4 +16,5 @@
          (succ1 (rule (plus x (succ y)) (succ (plus x y))))
          (target (formulas (== (succ (succ zero)) (plus (succ zero) (succ zero))))))
     (setf target (rewrite target succ1))
-    (setf target (rewrite target succ0))))
+    (setf target (rewrite target succ0))
+    (format t "~A~%" target)))

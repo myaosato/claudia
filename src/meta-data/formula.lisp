@@ -170,4 +170,3 @@
 (defmethod == ((a predicate) (b meta-data))
   (and (typep b 'predicate)
        (every #'== (predicate-terms a) (predicate-terms b))))
-

@@ -19,5 +19,3 @@
   (if (typep x 'meta-data)
       (find var (free-vars x) :test #'eq)
       (lambda (f) (free-p var f))))
-
-

@@ -65,15 +65,3 @@
 ;; term is substitutable
 (defmethod <-able ((place term) (var var) (term term))
   t)
-
-;; rewrite
-(defmethod rewrite ((term var) reduction)
-  term)
-(defmethod rewrite ((term const) reduction)
-  term)
-(defmethod rewrite ((term func) reduction)
-  (let* ((1st-step (apply #'func (mapcar (lambda (x) (rewrite x reduction)) (func-terms term))))
-         (reducible (funcall reduction 1st-step)))
-    (if reducible
-        reducible
-        1st-step)))

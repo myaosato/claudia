@@ -1,7 +1,7 @@
 (defpackage :claudia-test/rewrite
   (:use :cl
         :claudia/meta-data/interface
-        :claudia/pattern/pattern)
+        :claudia/pattern/interface)
   (:export :test))
 (in-package :claudia-test/rewrite)
 
@@ -15,5 +15,5 @@
          (succ0 (rule (plus x zero) x))
          (succ1 (rule (plus x (succ y)) (succ (plus x y))))
          (target (formulas (== (succ (succ zero)) (plus (succ zero) (succ zero))))))
-    (setf target (rewrite target (lambda (x) (reduction succ1 x))))
-    (setf target (rewrite target (lambda (x) (reduction succ0 x))))))
+    (setf target (rewrite target succ1))
+    (setf target (rewrite target succ0))))

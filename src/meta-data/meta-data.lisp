@@ -3,7 +3,7 @@
   (:export :meta-data
            :%free-vars :free-vars :free-p
            :<- :<-able
-           :== :rewrite))
+           :==))
 (in-package :claudia/meta-data/meta-data)
 
 (defclass meta-data nil
@@ -19,6 +19,3 @@
   (if (typep x 'meta-data)
       (find var (free-vars x) :test #'eq)
       (lambda (f) (free-p var f))))
-
-(defmethod rewrite ((meta-data meta-data) reduction)
-  (error "rewrite method for type ~A is not defined" (type-of place)))

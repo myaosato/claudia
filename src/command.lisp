@@ -2,6 +2,7 @@
   (:use :cl
         :claudia/environment
         :claudia/goal)
+  (:import-from :claudia/sequent)
   (:import-from :claudia/lk)
   (:export :id :cut
            :and-l :and-r
@@ -12,7 +13,8 @@
            :exists-l :exists-r
            :wl :wr
            :cl :cr
-           :pl :pr))
+           :pl :pr
+           :rewrite-l :rewrite-r))
 (in-package :claudia/command)
 
 (defun id (&optional (n 0))
@@ -74,3 +76,9 @@
 
 (defun pr (&optional (n 0) (m 0) (l 1))
   (app current-goal n #'claudia/lk:pr m l))
+
+(defun rewrite-l (rule &optional (n 0) (m 0))
+  (app current-goal n #'claudia/sequent:rewrite-l m rule))
+
+(defun rewrite-r (rule &optional (n 0) (m 0))
+  (app current-goal n #'claudia/sequent:rewrite-r m rule))

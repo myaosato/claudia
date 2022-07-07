@@ -5,6 +5,8 @@
   (:export :rewrite))
 (in-package :claudia/pattern/rewrite)
 
+(defgeneric rewrite (target rule))
+
 (defmethod rewrite ((term var) (rule rule))
   term)
 (defmethod rewrite ((term const) (rule rule))

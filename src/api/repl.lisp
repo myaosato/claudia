@@ -7,6 +7,8 @@
                 :current-theorem
                 :reset-claudia-environment)
   (:import-from :claudia/command)
+  (:import-from :claudia/pattern/interface
+                :rule)
   (:import-from :claudia/meta-data/interface
                 :var :const :func
                 :∧ :∨ :¬ :→ :∀ :∃ :predicate :prop
@@ -34,6 +36,8 @@
            :∧ :∨ :¬ :→ :∀ :∃ :predicate
            :func :const
            :terms :formulas
+           ;; pattern
+           :rule
            ;; environment
            :reset-claudia-environment))
 (in-package :claudia/api/repl)
@@ -108,7 +112,7 @@
   (with-environment claudia/command:to-r n m))
 
 (defun forall-l (term &optional (n 0) (m 0))
-  (with-environment claudia/command:forall-l n term m))
+  (with-environment claudia/command:forall-l term n m))
 
 (defun forall-r (&optional (n 0) (m 0))
   (with-environment claudia/command:forall-r n m))
@@ -117,7 +121,7 @@
   (with-environment claudia/command:exists-l n m))
 
 (defun exists-r (term &optional (n 0) (m 0))
-  (with-environment claudia/command:exists-r n term m))
+  (with-environment claudia/command:exists-r term n m))
 
 (defun wl (&optional (n 0) (m 0))
   (with-environment claudia/command:wl n m))
@@ -136,6 +140,13 @@
 
 (defun pr (&optional (n 0) (m 0) (l 1))
   (with-environment claudia/command:pr n m l))
+
+(defun rewrite-l (rule &optional (n 0) (m 0))
+  (with-environment claudia/command:rewrite-l rule n m))
+
+(defun rewrite-r (rule &optional (n 0) (m 0))
+  (with-environment claudia/command:rewrite-r rule n m))
+
 
 ;; api helper
 (defun props ()

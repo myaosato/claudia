@@ -1,6 +1,8 @@
 (defpackage :claudia/sequent
   (:use :cl
-        :claudia/meta-data/interface)
+        :claudia/meta-data/interface
+        :claudia/pattern/interface)
+  (:shadow :rewrite)
   (:export :sequent :sequent-list
            :l :r
            :length-l :length-r
@@ -8,7 +10,8 @@
            :empty-l :empty-r
            :rest-l :rest-r
            :remove-nth-l :remove-nth-r
-           :replace-nth-l :replace-nth-r))
+           :replace-nth-l :replace-nth-r
+           :rewrite-l :rewrite-r))
 (in-package :claudia/sequent)
 
 ;; ****************************************************************
@@ -49,3 +52,11 @@
   (append (subseq (l seq) 0 n) formula-list (subseq (l seq) (1+ n))))
 (defun replace-nth-r (n formula-list seq)
   (append (subseq (r seq) 0 n) formula-list (subseq (r seq) (1+ n))))
+
+; rewrite
+(defun rewrite-l (seq n rule)
+  (list (sequent (replace-nth-l n (list (claudia/pattern/interface:rewrite (nth-l n seq) rule)) seq)
+                 (r seq))))
+(defun rewrite-r (seq n rule)
+  (list (sequent (l seq)
+                 (replace-nth-r n (list (claudia/pattern/interface:rewrite (nth-r n seq) rule)) seq))))

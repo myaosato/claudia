@@ -47,8 +47,9 @@
   ((before :initarg :before :reader before :type func)
    (after :initarg :after :reader after :type term)))
 
-(defmacro rule (before after)
-  `(make-instance 'rule :before (terms ,before) :after (terms ,after)))
+(defmacro rule (vars before after)
+  `(let ,(mapcar (lambda (s) `(,s (var ',s))) vars)
+     (make-instance 'rule :before (terms ,before) :after (terms ,after))))
 
 (defun reduction (rule target)
   (let ((unifier (match (before rule) target)))

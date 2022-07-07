@@ -6,6 +6,8 @@
                 :var :const :func
                 :∧ :∨ :¬ :→ :∀ :∃ :prop :predicate
                 :formulas :terms)
+  (:import-from :claudia/pattern/interface
+                :rule)
   (:import-from :claudia/sequent
                 :sequent)
   (:import-from :claudia/goal
@@ -25,6 +27,9 @@
            :wl :wr
            :cl :cr
            :pl :pr
+           :rewrite-l :rewrite-r
+           ;; pattern
+           :rule
            ;; meta-data
            :∧ :∨ :¬ :→ :∀ :∃ :predicate
            :func

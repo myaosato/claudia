@@ -2,7 +2,9 @@
   (:use :cl)
   (:import-from :claudia/examples/classical-propositional-logic)
   (:import-from :claudia/examples/first-order-logic)
-  (:import-from :claudia/examples/monic-is-injective))
+  (:import-from :claudia/examples/monic-is-injective)
+  (:import-from :claudia-test/rewrite)
+  (:export :test))
 (in-package :claudia-test/all)
 
 (defun test ()
@@ -11,4 +13,5 @@
   (claudia/examples/classical-propositional-logic:|Perice's law|)
   (claudia/examples/first-order-logic:specialization)
   (claudia/examples/monic-is-injective:injective->monic)
-  (claudia/examples/monic-is-injective:monic->injective))
+  (claudia/examples/monic-is-injective:monic->injective)
+  (claudia-test/rewrite:test))

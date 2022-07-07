@@ -5,7 +5,7 @@
         :claudia/meta-data/formula
         :claudia/meta-data/parser)
   (:export :meta-data
-           :== :<- :<-able :free-p
+           :== :<- :<-able :free-p :rewrite
            :term :term-list
            :var :var-name
            :const :const-name

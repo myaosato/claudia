@@ -1,9 +1,8 @@
 (defpackage :claudia/pattern/pattern
   (:use :cl
         :claudia/meta-data/interface)
-  (:export :match
-           :rewrite
-           :rule
+  (:shadow :rewrite)
+  (:export :rule
            :reduction))
 (in-package :claudia/pattern/pattern)
 
@@ -35,14 +34,14 @@
                     nil))))
     (%match pattern target (make-hash-table))))
 
-(defun rewrite (pattern map)
+(defun rewrite (pattern unifier)
   (declare (type term pattern))
   (cond ((typep pattern 'var)
-         (gethash pattern map))
+         (gethash pattern unifier))
         ((typep pattern 'const)
          pattern)
         ((typep pattern 'func)
-         (apply #'func (mapcar (lambda (x) (rewrite x map)) (func-terms pattern))))))
+         (apply #'func (mapcar (lambda (x) (rewrite x unifier)) (func-terms pattern))))))
          
 (defclass rule nil
   ((before :initarg :before :reader before :type func)
@@ -52,6 +51,6 @@
   `(make-instance 'rule :before (terms ,before) :after (terms ,after)))
 
 (defun reduction (rule target)
-  (let ((map (match (before rule) target)))
-    (when map
-      (rewrite (after rule) map))))
+  (let ((unifier (match (before rule) target)))
+    (when unifier
+      (rewrite (after rule) unifier))))

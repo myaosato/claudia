@@ -55,7 +55,7 @@
            (format t "~16,,,'-A [GOAL]~%" "")
            (format t "~W~%" current-goal)
            ,@(mapcar (lambda (command)
-                       `(progn 
+                       `(progn
                           (setf current-goal ,command)
                           (format t "~16,,,'-A [~A]~%" "" ',(car command))
                           (format t "~W~%" current-goal)))

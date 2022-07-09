@@ -154,7 +154,7 @@
   place)
 (defmethod == ((a prop) (b meta-data))
   (and (typep b 'prop)
-       (eq a b)))
+       (eq (prop-name a) (prop-name b))))
 
 ;; predicate
 (defclass predicate (atomic)

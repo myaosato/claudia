@@ -1,7 +1,12 @@
 (defpackage :claudia/examples/equivalence
   (:use :cl
         :claudia/api/theorem)
-  (:export :symmetry))
+  (:export :==
+           :curried-==-1
+           :curried-==-2
+           :reflexivity
+           :substitutivity
+           :symmetry))
 (in-package :claudia/examples/equivalence)
 
 (def-const ==)

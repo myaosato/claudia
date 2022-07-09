@@ -9,9 +9,9 @@
 (defclass meta-data nil
   ((free-vars :initarg :free-vars :initform nil :accessor %free-vars :reader free-vars)))
 (defmethod <- ((place meta-data) var term)
-  (error "substitute method for type ~A is not defined" (type-of place)))
+  (error "<- method for type ~A is not defined" (type-of place)))
 (defmethod <-able ((place meta-data) var term)
-  (error "substitutable method for type ~A is not defined" (type-of place)))
+  (error "<-able method for type ~A is not defined" (type-of place)))
 (defmethod == ((a meta-data) (b meta-data))
   (error "meta-data-= method for type ~A is not defined" (type-of a)))
 

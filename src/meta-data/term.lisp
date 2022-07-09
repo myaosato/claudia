@@ -35,7 +35,7 @@
       place))
 (defmethod == ((a var) (b meta-data))
   (and (typep b 'var)
-       (eq a b)))
+       (eq (var-name a) (var-name b))))
 
 ;; const
 (defclass const (term)
@@ -46,7 +46,7 @@
   place)
 (defmethod == ((a const) (b meta-data))
   (and (typep b 'const)
-       (eq a b)))
+       (eq (const-name a) (const-name b))))
 
 ;; func
 (defclass func (term)

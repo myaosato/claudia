@@ -66,5 +66,5 @@
   `(defvar ,sym (const ',sym)))
 
 (defmacro def-axiom (name vars axiom)
-  `(let ,(mapcar (lambda (s) `(,s (var ',s))) vars)
-     (defvar ,name (formulas ,axiom))))
+  `(defvar ,name (let ,(mapcar (lambda (s) `(,s (var ',s))) vars)
+                   (formulas ,axiom))))

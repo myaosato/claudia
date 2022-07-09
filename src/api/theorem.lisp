@@ -48,21 +48,15 @@
 
 (defmacro def-theorem (name theorem (&key (props nil) (vars nil)) &body proof)
   `(defun ,name ()
-     (let (,@(mapcar (lambda (sym) (list sym `(prop ',sym))) props)
-           ,@(mapcar (lambda (sym) (list sym `(var ',sym))) vars))
-       (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
+     (let ((*print-pprint-dispatch* print-claudia-print-dispatch))
+       (let (,@(mapcar (lambda (sym) (list sym `(prop ',sym))) props)
+             ,@(mapcar (lambda (sym) (list sym `(var ',sym))) vars))
          (with-current-goal (goal (sequent nil (list (formulas ,theorem))))
            (format t "~16,,,'-A [GOAL]~%" "")
            (format t "~W~%" current-goal)
-           ,@(mapcar (lambda (command)
-                       `(progn
-                          (setf current-goal ,command)
-                          (format t "~16,,,'-A [~A]~%" "" ',(car command))
-                          (format t "~W~%" current-goal)))
-                     proof))))))
+           ,@proof)))))
 
 (defmacro def-const (sym)
-  (declare (type symbol sym))
   `(defvar ,sym (const ',sym)))
 
 (defmacro def-axiom (name vars axiom)

@@ -54,9 +54,9 @@
   (append (subseq (r seq) 0 n) formula-list (subseq (r seq) (1+ n))))
 
 ; rewrite
-(defun rewrite-l (seq n rule)
+(defun rewrite-l (seq rule n)
   (list (sequent (replace-nth-l n (list (claudia/pattern/interface:rewrite (nth-l n seq) rule)) seq)
                  (r seq))))
-(defun rewrite-r (seq n rule)
+(defun rewrite-r (seq rule n)
   (list (sequent (l seq)
                  (replace-nth-r n (list (claudia/pattern/interface:rewrite (nth-r n seq) rule)) seq))))

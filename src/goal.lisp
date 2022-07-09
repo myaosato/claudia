@@ -24,7 +24,6 @@
   (nth n (sequents goal)))
 
 (defun app (goal n rule &rest args)
-  (let ((result (apply rule (nth-seq n goal) args)))
-    (apply #'goal (append (subseq (sequents goal) 0 n)
-                          result
-                          (subseq (sequents goal) (1+ n))))))
+  (apply #'goal (append (subseq (sequents goal) 0 n)
+                        (apply rule (nth-seq n goal) args)
+                        (subseq (sequents goal) (1+ n)))))

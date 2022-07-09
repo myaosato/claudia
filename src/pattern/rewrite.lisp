@@ -15,7 +15,7 @@
   (let* ((1st-step (apply #'func (mapcar (lambda (x) (rewrite x rule)) (func-terms term))))
          (reducible (reduction rule 1st-step)))
     (if reducible
-        reducible
+        (rewrite reducible rule)
         1st-step)))
 
 (defmethod rewrite ((formula ∧) (rule rule))
@@ -34,7 +34,7 @@
   (let* ((1st-step (apply #'func (mapcar (lambda (x) (rewrite x rule)) (predicate-terms formula))))
          (reducible (reduction rule 1st-step)))
     (if reducible
-        (apply #'predicate (func-terms reducible))
+        (rewrite (apply #'predicate (func-terms reducible)) rule)
         (apply #'predicate (func-terms 1st-step)))))
 (defmethod rewrite ((formula prop) (rule rule))
   formula)

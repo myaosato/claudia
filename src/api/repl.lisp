@@ -21,6 +21,7 @@
                 :print-claudia-print-dispatch)
   (:export :start-proof :proof-hist :undo :export-proof
            :def-prop :def-var
+           :app-a
            :id :cut
            :and-l :and-r
            :or-l :or-r
@@ -31,6 +32,7 @@
            :wl :wr
            :cl :cr
            :pl :pr
+           :rewrite-l :rewrite-r
            :props :vars
            ;; meta-data
            :∧ :∨ :¬ :→ :∀ :∃ :predicate
@@ -81,6 +83,9 @@
      t))
 
 ;; api comannd
+(defun app-a (axiom &optional (n 0))
+  (with-environment claudia/command:app-a axiom n))
+
 (defun id (&optional (n 0))
   (with-environment claudia/command:id n))
 

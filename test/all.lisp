@@ -3,6 +3,7 @@
   (:import-from :claudia/examples/classical-propositional-logic)
   (:import-from :claudia/examples/first-order-logic)
   (:import-from :claudia/examples/monic-epic)
+  (:import-from :claudia/examples/equivalence)
   (:import-from :claudia-test/rewrite)
   (:export :test))
 (in-package :claudia-test/all)
@@ -14,4 +15,5 @@
   (claudia/examples/first-order-logic:specialization)
   (claudia/examples/monic-epic:injective->monic)
   (claudia/examples/monic-epic:monic->injective)
+  (claudia/examples/equivalence:symmetry)
   (claudia-test/rewrite:test))

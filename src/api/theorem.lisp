@@ -16,7 +16,9 @@
                 :print-claudia-print-dispatch)
   (:export :def-theorem
            :def-const
+           :def-axiom
            ;; command
+           :app-a
            :id :cut
            :and-l :and-r
            :or-l :or-r
@@ -62,3 +64,7 @@
 (defmacro def-const (sym)
   (declare (type symbol sym))
   `(defvar ,sym (const ',sym)))
+
+(defmacro def-axiom (name vars axiom)
+  `(let ,(mapcar (lambda (s) `(,s (var ',s))) vars)
+     (defvar ,name (formulas ,axiom))))

@@ -4,7 +4,8 @@
         :claudia/goal)
   (:import-from :claudia/sequent)
   (:import-from :claudia/lk)
-  (:export :id :cut
+  (:export :app-a
+           :id :cut
            :and-l :and-r
            :or-l :or-r
            :not-l :not-r
@@ -16,6 +17,9 @@
            :pl :pr
            :rewrite-l :rewrite-r))
 (in-package :claudia/command)
+
+(defun app-a (axiom &optional (n 0))
+  (app current-goal n #'claudia/lk:app-a axiom))
 
 (defun id (&optional (n 0))
   (app current-goal n #'claudia/lk:id))

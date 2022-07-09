@@ -2,7 +2,8 @@
   (:use :cl
         :claudia/meta-data/interface
         :claudia/sequent)
-  (:export :id :cut
+  (:export :app-a
+           :id :cut
            :and-l :and-r
            :or-l :or-r
            :not-l :not-r
@@ -24,6 +25,13 @@
 ;; - ∀
 ;; - ∃
 ;; ****************************************************************
+
+;; apply axiom
+;; NOTE: admit axiom and finish proof
+(defun app-a (seq axiom)
+  (if (some (lambda (x) (== axiom x)) (r seq))
+      nil ;; proved
+      (error "")))
 
 ;; axiom of LK
 ;; ------

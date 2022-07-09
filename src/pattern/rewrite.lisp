@@ -31,6 +31,10 @@
 (defmethod rewrite ((formula ∃) (rule rule))
   (∃ (∃-var formula) (rewrite (∃-formula formula) rule)))
 (defmethod rewrite ((formula predicate) (rule rule))
-  (apply #'predicate (mapcar (lambda (f) (rewrite f rule)) (predicate-terms formula))))
+  (let* ((1st-step (apply #'func (mapcar (lambda (x) (rewrite x rule)) (predicate-terms formula))))
+         (reducible (reduction rule 1st-step)))
+    (if reducible
+        (apply #'predicate (func-terms reducible))
+        (apply #'predicate (func-terms 1st-step)))))
 (defmethod rewrite ((formula prop) (rule rule))
   formula)

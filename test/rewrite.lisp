@@ -12,7 +12,7 @@
          (succ (const 'succ))
          (succ0 (rule (x) (plus x zero) x))
          (succ1 (rule (x y) (plus x (succ y)) (succ (plus x y))))
-         (target (formulas (== (succ (succ (succ zero))) (plus (succ (succ zero)) (succ zero))))))
+         (target (formulas (== (succ (succ (succ zero))) (plus (succ zero) (succ (succ zero)))))))
     (setf target (rewrite target succ1))
     (setf target (rewrite target succ0))
     (format t "~A~%" target)))

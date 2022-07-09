@@ -1,4 +1,4 @@
-(defpackage :claudia/examples/monic-is-injective
+(defpackage :claudia/examples/monic-epic
   (:use :cl
         :claudia/api/theorem)
   (:export :app
@@ -7,7 +7,7 @@
            :rule-constant
            :injective->monic
            :monic->injective))
-(in-package :claudia/examples/monic-is-injective)
+(in-package :claudia/examples/monic-epic)
 
 (def-const ==)
 (def-const constant)

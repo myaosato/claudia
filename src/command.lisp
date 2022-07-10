@@ -26,7 +26,7 @@
      (let* ((*print-pprint-dispatch* print-claudia-print-dispatch)
             (args (list ,@required ,@(mapcar #'car optional)))
             (new-goal (apply #'app current-goal ,sequent-number ,rule args)))
-       (format t "~16,,,'-A [~A: ~A: ~{~A~^ ~}]~%" "" ,sequent-number ',name args)
+       (format t "~16,,,'-A [~A: ~A ~{~A~^ ~}]~%" "" ,sequent-number ',name args)
        (setf current-goal new-goal)
        (format t "~W~%" current-goal)))))
 

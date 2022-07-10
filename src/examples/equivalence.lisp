@@ -6,7 +6,8 @@
            :curried-==-2
            :reflexivity
            :substitutivity
-           :symmetry))
+           :symmetry
+           :transitivity))
 (in-package :claudia/examples/equivalence)
 
 (def-const ==)
@@ -31,6 +32,32 @@
   (to-l)
   (id)
   (forall-l (terms (== x)))
+  (rewrite-l curried-==-2)
+  (to-l)
+  (id)
+  (id))
+
+(def-theorem transitivity
+    (∀ x (∀ y (∀ z (→ (∧ (== x y) (== y z)) (== x z)))))
+    (:vars (x y z p))
+  (forall-r)
+  (forall-r)
+  (forall-r)
+  (to-r)
+  (and-l)
+  (cut (formulas (∀ y (∀ x (→ (== y x) (∀ p (→ (p y) (p x))))))))
+  (app-a substitutivity)
+  (forall-l y)
+  (forall-l x)
+  (to-l)
+  (cut symmetry)
+  (app-a symmetry)
+  (forall-l x)
+  (forall-l y)
+  (to-l)
+  (id)
+  (id)
+  (forall-l (terms (== z)))
   (rewrite-l curried-==-2)
   (to-l)
   (id)

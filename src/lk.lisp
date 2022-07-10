@@ -1,6 +1,7 @@
 (defpackage :claudia/lk
   (:use :cl
         :claudia/meta-data/interface
+        :claudia/pattern/interface
         :claudia/sequent)
   (:export :app-a
            :id :cut
@@ -29,7 +30,7 @@
 ;; apply axiom
 ;; NOTE: admit axiom and finish proof
 (defun app-a (seq axiom)
-  (if (some (lambda (x) (== axiom x)) (r seq))
+  (if (some (lambda (x) (match axiom x)) (r seq))
       nil ;; proved
       (error "")))
 

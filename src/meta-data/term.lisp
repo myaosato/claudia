@@ -30,7 +30,7 @@
 (defun var (name)
   (make-instance 'var :name name))
 (defmethod <- ((place var) (var var) (term term))
-  (if (eq place var)
+  (if (== place var)
       term
       place))
 (defmethod == ((a var) (b meta-data))

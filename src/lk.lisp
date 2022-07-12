@@ -40,7 +40,7 @@
 (defun id (seq)
   (if (and (> (length-l seq) 0)
            (> (length-r seq) 0)
-           (some (lambda (lf) (some (lambda (rf) (== lf rf)) (r seq))) (l seq)))
+           (some (lambda (lf) (some (lambda (rf) (match lf rf)) (r seq))) (l seq)))
       nil ;; proved
       (error "")))
 

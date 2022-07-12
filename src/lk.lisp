@@ -147,7 +147,7 @@
     (if (and (typep focus '∃)
              (notany (free-p (∃-var focus)) (remove-nth-l n seq))
              (notany (free-p (∃-var focus)) (r seq)))
-        (list (sequent (replace-nth-r n (list (∃-formula focus)) seq) (r seq)))
+        (list (sequent (replace-nth-l n (list (∃-formula focus)) seq) (r seq)))
         (error "EXISTS-L (~A) is not applicable to ~A" n seq))))
 
 (defun exists-r (seq term n)

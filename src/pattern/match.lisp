@@ -15,7 +15,7 @@
            nil))))
 
 (defun match-var (pattern target map)
-  (when (and (typep pattern 'var) (typep target 'var))
+  (when (and (typep pattern 'var) (typep target 'term))
     (check pattern target map)))
 (defun match-const (pattern target map)
   (when (and (typep pattern 'const) (== pattern target))

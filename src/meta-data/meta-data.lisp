@@ -17,5 +17,5 @@
 
 (defun free-p (var &optional x)
   (if (typep x 'meta-data)
-      (find var (free-vars x) :test #'eq)
+      (find var (free-vars x) :test #'==)
       (lambda (f) (free-p var f))))

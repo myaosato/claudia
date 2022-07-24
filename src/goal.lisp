@@ -19,7 +19,6 @@
 (defun completed-p (goal)
   (null (sequents goal)))
 
-
 (defun nth-seq (n goal)
   (nth n (sequents goal)))
 

@@ -130,24 +130,26 @@
         (list (sequent (replace-nth-l n (list (<- (∀-formula focus) (∀-var focus) term)) seq) (r seq)))
         (error "FORALL-L (~A) is not applicable to ~A" n seq))))
 
-(defun forall-r (seq n)
+(defun forall-r (seq var n)
   (let ((focus (nth-r n seq)))
     (if (and (typep focus '∀)
-             (notany (free-p (∀-var focus)) (l seq))
-             (notany (free-p (∀-var focus)) (remove-nth-r n seq)))
-        (list (sequent (l seq) (replace-nth-r n (list (∀-formula focus)) seq)))
+             (typep var 'var)
+             (notany (free-p var) (l seq))
+             (notany (free-p var) (remove-nth-r n seq)))
+        (list (sequent (l seq) (replace-nth-r n (list (<- (∀-formula focus) (∀-var focus) var)) seq)))
         (error "FORALL-R (~A) is not applicable to ~A" n seq))))
 
 ;; Exist
 ;; A,Γ ⊢ Δ        Γ ⊢ A[t/x],Δ
 ;; ---------(∃L)  ------------(∃R)  
 ;; ∃xA,Γ ⊢ Δ      Γ ⊢ ∃xA,Δ
-(defun exists-l (seq n)
+(defun exists-l (seq var n)
   (let ((focus (nth-l n seq)))
     (if (and (typep focus '∃)
-             (notany (free-p (∃-var focus)) (remove-nth-l n seq))
-             (notany (free-p (∃-var focus)) (r seq)))
-        (list (sequent (replace-nth-l n (list (∃-formula focus)) seq) (r seq)))
+             (typep var 'var)
+             (notany (free-p var) (remove-nth-l n seq))
+             (notany (free-p var) (r seq)))
+        (list (sequent (replace-nth-l n (list (<- (∃-formula focus) (∃-var focus) var)) seq) (r seq)))
         (error "EXISTS-L (~A) is not applicable to ~A" n seq))))
 
 (defun exists-r (seq term n)

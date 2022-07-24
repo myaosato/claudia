@@ -115,11 +115,11 @@
 (defun forall-l (term &optional (n 0) (m 0))
   (with-environment claudia/command:forall-l term n m))
 
-(defun forall-r (&optional (n 0) (m 0))
-  (with-environment claudia/command:forall-r n m))
+(defun forall-r (var &optional (n 0) (m 0))
+  (with-environment claudia/command:forall-r var n m))
 
-(defun exists-l (&optional (n 0) (m 0))
-  (with-environment claudia/command:exists-l n m))
+(defun exists-l (var &optional (n 0) (m 0))
+  (with-environment claudia/command:exists-l var n m))
 
 (defun exists-r (term &optional (n 0) (m 0))
   (with-environment claudia/command:exists-r term n m))
